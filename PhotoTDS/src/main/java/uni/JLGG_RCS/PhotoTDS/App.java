@@ -1,4 +1,4 @@
-package Uni.JLGG_RCS.PhotoTDS;
+package uni.JLGG_RCS.PhotoTDS;
 
 /**
  * Hello world!
