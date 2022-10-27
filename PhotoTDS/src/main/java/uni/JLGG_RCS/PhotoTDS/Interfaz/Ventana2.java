@@ -1,4 +1,4 @@
-package uni.JLGG_RCS.PhotoTDS;
+package uni.JLGG_RCS.PhotoTDS.Interfaz;
 
 import java.awt.EventQueue;
 

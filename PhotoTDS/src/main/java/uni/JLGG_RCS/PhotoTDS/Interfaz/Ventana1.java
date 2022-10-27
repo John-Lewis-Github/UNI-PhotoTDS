@@ -1,4 +1,4 @@
-package uni.JLGG_RCS.PhotoTDS;
+package uni.JLGG_RCS.PhotoTDS.Interfaz;
 
 import java.awt.EventQueue;
 
@@ -106,7 +106,7 @@ public class Ventana1 {
 		passwordField.setColumns(30);
 		panel_2.add(passwordField);
 		
-		JButton btnNewButton = new JButton("Inciar Sesión");
+		JButton btnNewButton = new JButton("Iniciar Sesión");
 		btnNewButton.setPreferredSize(new Dimension(300, 75));
 		btnNewButton.setBackground(new Color(30, 144, 255));
 		btnNewButton.setForeground(Color.WHITE);
