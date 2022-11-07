@@ -17,6 +17,7 @@ public class Usuario {
 	private Image foto;
 	
 	private List<Usuario> seguidores;
+	private List<Publicacion> fotos;
 	
 	public Usuario(String nombreCompleto, String nombreUsuario, String email, String contraseña, Date fechaNacimiento) {
 		this.nombreCompleto = nombreCompleto;
@@ -68,12 +69,13 @@ public class Usuario {
 	public String getEmail() {
 		return email;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	public List<Usuario> getSeguidores() {
+		return new ArrayList<Usuario>(seguidores);
+	}
+
+	public List<Publicacion> getFotos() {
+		return new ArrayList<Publicacion>(fotos);
+	}
 
 }
