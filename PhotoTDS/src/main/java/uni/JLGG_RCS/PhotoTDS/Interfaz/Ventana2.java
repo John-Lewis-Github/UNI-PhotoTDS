@@ -19,10 +19,14 @@ import javax.swing.JTextArea;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
 public class Ventana2 {
 
+	private static final int MARGEN_HORIZONTAL = 10;
 	private JFrame frame;
 	private JTextField txtEmail;
 	private JTextField txtNombreCompleto;
@@ -57,90 +61,121 @@ public class Ventana2 {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(400, 50, 450, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		/**
+		 * La ventana mantendrá una estructura vertical, por lo que se usará un panel
+		 * central con un BoxLayout que organice los elementos verticalmente. Para añadir
+		 * márgenes, se coloca este panel dentro de un contenedor que los posea.
+		 */
+		JPanel contenedor = new JPanel();
+		frame.setContentPane(contenedor);
+		contenedor.setPreferredSize(new Dimension(450, 600));
+		contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.X_AXIS));
+		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
+		JPanel panel = new JPanel();		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		contenedor.add(panel);
+		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
+
+		// Panel del título
+		JPanel panelTitulo = new JPanel();
+		panel.add(panelTitulo);
 		
 		JLabel lblPhototds = new JLabel("PhotoTDS");
 		lblPhototds.setHorizontalTextPosition(SwingConstants.CENTER);
 		lblPhototds.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPhototds.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 30));
-		panel.add(lblPhototds);
+		panelTitulo.setMaximumSize(new Dimension(450,30));
+		panelTitulo.add(lblPhototds);
 		
+		
+		JPanel panelTexto = new JPanel();
+		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
+		// Truco para fijar solo la altura máxima
+		panelTexto.setMaximumSize(new Dimension(4000, 100));
+		panel.add(panelTexto);
+
+		// Cada campo de texto se incluye en el panel de texto
 		txtEmail = new JTextField();
 		txtEmail.setText("Email");
-		panel.add(txtEmail);
+		panelTexto.add(txtEmail);
 		txtEmail.setColumns(30);
 		
 		txtNombreCompleto = new JTextField();
 		txtNombreCompleto.setText("Nombre completo");
-		panel.add(txtNombreCompleto);
+		panelTexto.add(txtNombreCompleto);
 		txtNombreCompleto.setColumns(30);
 		
 		txtNombreDeUsuario = new JTextField();
 		txtNombreDeUsuario.setText("Nombre de usuario");
-		panel.add(txtNombreDeUsuario);
+		panelTexto.add(txtNombreDeUsuario);
 		txtNombreDeUsuario.setColumns(30);
 		
 		pwdPassword = new JPasswordField();
 		pwdPassword.setColumns(30);
 		pwdPassword.setText("Password");
-		panel.add(pwdPassword);
+		panelTexto.add(pwdPassword);
 		
-		JPanel panel_1 = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panel_1.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		panel_1.setPreferredSize(new Dimension(200, 120));
-		panel_1.setMinimumSize(new Dimension(100, 100));
-		frame.getContentPane().add(panel_1, BorderLayout.SOUTH);
+		// Tras el texto se deja un margen vertical
+		panelTexto.add(Box.createVerticalStrut(10));
 		
-		JPanel panel_2 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_2.getLayout();
-		panel_2.setName("Fecha de Nacimiento");
-		panel_2.setPreferredSize(new Dimension(250, 30));
-		panel_1.add(panel_2);
+		// El panel de fecha tendrá Layout de flujo
+		JPanel panelFecha = new JPanel();
+		panelFecha.setName("Fecha de Nacimiento");
+		panelFecha.setPreferredSize(new Dimension(400, 40));
+		panelFecha.setMaximumSize(new Dimension(400, 40));
+		panel.add(panelFecha);
 		
 		JLabel lblFechaDeNacimiento = new JLabel("Fecha de Nacimiento");
-		panel_2.add(lblFechaDeNacimiento);
+		panelFecha.add(lblFechaDeNacimiento);
 		
 		JDateChooser lblNewLabel = new JDateChooser();
-		panel_2.add(lblNewLabel);
+		panelFecha.add(lblNewLabel);
 		lblNewLabel.setDateFormatString("dd/MM/yyyy");
 		
-		JPanel panel_3 = new JPanel();
-		panel_3.setPreferredSize(new Dimension(250, 30));
-		panel_1.add(panel_3);
+		// Añadimos un pequeño margen
+		panel.add(Box.createVerticalStrut(10));
+		
+		// Después se incluye un panel para elegir la foto
+		JPanel panelFoto = new JPanel();
+		panelFoto.setLayout(new BorderLayout());
+		panel.add(panelFoto);
 		
 		JLabel lblIncluirFotoDe = new JLabel("Incluir foto de usuario (opcional)");
-		panel_3.add(lblIncluirFotoDe);
+		lblIncluirFotoDe.setHorizontalAlignment(SwingConstants.CENTER);
+		panelFoto.add(lblIncluirFotoDe, BorderLayout.NORTH);
 		
 		JFileChooser lblTest = new JFileChooser("test");
 		lblTest.setBorder(new TitledBorder(null, "+", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		lblTest.setDialogTitle("File");
-		lblTest.setPreferredSize(new Dimension(20, 20));
-		panel_3.add(lblTest);
+		lblTest.setPreferredSize(new Dimension(400, 250));
+		panelFoto.add(lblTest);
 		
-		JPanel panel_4 = new JPanel();
-		panel_4.setPreferredSize(new Dimension(250, 30));
-		panel_1.add(panel_4);
+		// Añadimos un pequeño margen
+		panel.add(Box.createVerticalStrut(10));
 		
-		JLabel lblIncluirPresentacinopcional = new JLabel("Incluir presentación (opcional)");
-		panel_4.add(lblIncluirPresentacinopcional);
+		JPanel panelPresentacion = new JPanel();
+		panelPresentacion.setLayout(new BorderLayout());
+		panel.add(panelPresentacion);
+		
+		JLabel lblIncluirPresentacionOpcional = new JLabel("Incluir presentación (opcional)");
+		lblIncluirPresentacionOpcional.setHorizontalAlignment(SwingConstants.CENTER);
+		panelPresentacion.add(lblIncluirPresentacionOpcional, BorderLayout.NORTH);
 		
 		JTextArea textArea = new JTextArea();
 		textArea.setBackground(Color.LIGHT_GRAY);
 		textArea.setText("...");
-		panel_4.add(textArea);
+		panelPresentacion.add(textArea, BorderLayout.CENTER);
 		
-		JPanel panel_5 = new JPanel();
-		panel_1.add(panel_5);
+		JPanel panelBotones= new JPanel();
+		panel.add(panelBotones);
 		
 		JButton btnOk = new JButton("OK");
-		panel_5.add(btnOk);
+		panelBotones.add(btnOk);
 		
 		JButton btnCancel = new JButton("Cancel");
-		panel_5.add(btnCancel);
+		panelBotones.add(btnCancel);
 	}
 }
