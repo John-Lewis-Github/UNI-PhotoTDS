@@ -13,13 +13,9 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.Dimension;
 import javax.swing.JFileChooser;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JTextArea;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;

@@ -58,9 +58,13 @@ public class Ventana1 {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 400, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+		// En esta ventana las dimensiones quedarán fijas
+		frame.getContentPane().setMaximumSize(new Dimension(400, 400));
+		frame.getContentPane().setMinimumSize(new Dimension(400, 400));
+		frame.setResizable(false);
+
 		JPanel panel = new JPanel();
 		panel.setPreferredSize(new Dimension(75, 75));
 		frame.getContentPane().add(panel, BorderLayout.SOUTH);

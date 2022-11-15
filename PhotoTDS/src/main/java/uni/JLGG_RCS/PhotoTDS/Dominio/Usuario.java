@@ -17,7 +17,9 @@ public class Usuario {
 	private Image foto;
 	
 	private List<Usuario> seguidores;
-	private List<Publicacion> fotos;
+	private List<Foto> fotos;
+	private List<Album> albumes;
+	private List<Notificacion> notificaciones;
 	
 	public Usuario(String nombreCompleto, String nombreUsuario, String email, String contraseña, Date fechaNacimiento) {
 		this.nombreCompleto = nombreCompleto;
@@ -27,6 +29,9 @@ public class Usuario {
 		this.fechaNacimiento = fechaNacimiento;
 				
 		this.seguidores = new ArrayList<Usuario>();
+		this.fotos = new ArrayList<Foto>();
+		this.albumes = new ArrayList<Album>();
+		this.notificaciones = new ArrayList<Notificacion>();
 	}
 
 	public String getPresentacion() {
@@ -74,8 +79,19 @@ public class Usuario {
 		return new ArrayList<Usuario>(seguidores);
 	}
 
-	public List<Publicacion> getFotos() {
-		return new ArrayList<Publicacion>(fotos);
+	public List<Foto> getFotos() {
+		return new ArrayList<Foto>(fotos);
+	}
+	
+	public List<Album> getAlbumes() {
+		return new ArrayList<Album>(albumes);
+	}
+	
+	public int getMeGustaTotales() {
+		int total = 0;
+		fotos.stream().map(f -> f.getMegusta()).reduce(total, (i1,i2) -> i1+i2);
+		albumes.stream().map(f -> f.getMegusta()).reduce(total, (i1,i2) -> i1+i2);
+		return total;
 	}
 
 }
