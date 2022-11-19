@@ -8,11 +8,15 @@ import java.awt.BorderLayout;
 import javax.swing.JLabel;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.Dimension;
 import javax.swing.JFileChooser;
+import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JTextArea;
 import java.awt.Color;
@@ -20,10 +24,20 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-public class Ventana2 {
+public class VentanaRegistro {
 
+	private static final int ANCHURA = 450;
+	private static final int ALTURA = 600;
 	private static final int MARGEN_HORIZONTAL = 10;
-	private JFrame frame;
+	private JFrame framePrincipal;
+	private JPanel contenedor;
+	private JPanel panelPrincipal;
+	private JPanel panelTitulo;
+	private JPanel panelTexto;
+	private JPanel panelFecha;
+	private JPanel panelFoto;
+	private JPanel panelPresentacion;
+	private JPanel panelBotones;
 	private JTextField txtEmail;
 	private JTextField txtNombreCompleto;
 	private JTextField txtNombreDeUsuario;
@@ -36,8 +50,8 @@ public class Ventana2 {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Ventana2 window = new Ventana2();
-					window.frame.setVisible(true);
+					VentanaRegistro window = new VentanaRegistro();
+					window.framePrincipal.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,36 +62,68 @@ public class Ventana2 {
 	/**
 	 * Create the application.
 	 */
-	public Ventana2() {
+	public VentanaRegistro() {
 		initialize();
+
+		panelPrincipal = crearPanelPrincipal();
+
+		addTitulo(panelPrincipal);
+		
+		addCamposTexto(panelPrincipal);
+		panelTexto.add(Box.createVerticalStrut(10));
+		
+		addPanelFecha(panelPrincipal);
+		panelPrincipal.add(Box.createVerticalStrut(10));
+		
+		addPanelFoto(panelPrincipal);
+		panelPrincipal.add(Box.createVerticalStrut(10));
+		
+		addPanelPresentacion(panelPrincipal);
+		
+		addBotones(panelPrincipal);
 	}
+	
+
+
+	
+
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(400, 50, 450, 600);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		framePrincipal = new JFrame();
+		framePrincipal.setBounds(400, 50, ANCHURA, ALTURA);
+		framePrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		/**
-		 * La ventana mantendrá una estructura vertical, por lo que se usará un panel
-		 * central con un BoxLayout que organice los elementos verticalmente. Para añadir
-		 * márgenes, se coloca este panel dentro de un contenedor que los posea.
-		 */
-		JPanel contenedor = new JPanel();
-		frame.setContentPane(contenedor);
-		contenedor.setPreferredSize(new Dimension(450, 600));
+		contenedor = new JPanel();
+		framePrincipal.setContentPane(contenedor);
+		contenedor.setPreferredSize(new Dimension(ANCHURA, ALTURA));
 		contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.X_AXIS));
-		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
-		JPanel panel = new JPanel();		
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		contenedor.add(panel);
-		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
+	}
+	
+	/**
+	 * La ventana mantendrá una estructura vertical, por lo que se usará un panel
+	 * central con un BoxLayout que organice los elementos verticalmente. Para añadir
+	 * márgenes, se coloca este panel dentro de un contenedor que los posea.
+	 */
+	private JPanel crearPanelPrincipal() {
+		JPanel panelPrincipal = new JPanel();
+		panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
 
+
+		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
+		contenedor.add(panelPrincipal);
+		contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
+		
+		return panelPrincipal;
+	}
+	
+
+	private void addTitulo(JPanel panelPrincipal) {
 		// Panel del título
-		JPanel panelTitulo = new JPanel();
-		panel.add(panelTitulo);
+		panelTitulo = new JPanel();
+		panelPrincipal.add(panelTitulo);
 		
 		JLabel lblPhototds = new JLabel("PhotoTDS");
 		lblPhototds.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -85,13 +131,14 @@ public class Ventana2 {
 		lblPhototds.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 30));
 		panelTitulo.setMaximumSize(new Dimension(450,30));
 		panelTitulo.add(lblPhototds);
-		
-		
-		JPanel panelTexto = new JPanel();
+	}
+
+	private void addCamposTexto(JPanel panelPrincipal) {
+		panelTexto = new JPanel();
 		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
 		// Truco para fijar solo la altura máxima
 		panelTexto.setMaximumSize(new Dimension(4000, 100));
-		panel.add(panelTexto);
+		panelPrincipal.add(panelTexto);
 
 		// Cada campo de texto se incluye en el panel de texto
 		txtEmail = new JTextField();
@@ -113,15 +160,15 @@ public class Ventana2 {
 		pwdPassword.setColumns(30);
 		pwdPassword.setText("Password");
 		panelTexto.add(pwdPassword);
-		
-		// Tras el texto se deja un margen vertical
-		panelTexto.add(Box.createVerticalStrut(10));
-		
+	}
+	
+
+	
+	private void addPanelFecha(JPanel panel) {
 		// El panel de fecha tendrá Layout de flujo
-		JPanel panelFecha = new JPanel();
+		panelFecha = new JPanel();
 		panelFecha.setName("Fecha de Nacimiento");
-		panelFecha.setPreferredSize(new Dimension(400, 40));
-		panelFecha.setMaximumSize(new Dimension(400, 40));
+		panelFecha.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		panel.add(panelFecha);
 		
 		JLabel lblFechaDeNacimiento = new JLabel("Fecha de Nacimiento");
@@ -130,12 +177,10 @@ public class Ventana2 {
 		JDateChooser lblNewLabel = new JDateChooser();
 		panelFecha.add(lblNewLabel);
 		lblNewLabel.setDateFormatString("dd/MM/yyyy");
-		
-		// Añadimos un pequeño margen
-		panel.add(Box.createVerticalStrut(10));
-		
-		// Después se incluye un panel para elegir la foto
-		JPanel panelFoto = new JPanel();
+	}
+
+	private void addPanelFoto(JPanel panel) {
+		panelFoto = new JPanel();
 		panelFoto.setLayout(new BorderLayout());
 		panel.add(panelFoto);
 		
@@ -148,11 +193,11 @@ public class Ventana2 {
 		lblTest.setDialogTitle("File");
 		lblTest.setPreferredSize(new Dimension(400, 250));
 		panelFoto.add(lblTest);
-		
-		// Añadimos un pequeño margen
-		panel.add(Box.createVerticalStrut(10));
-		
-		JPanel panelPresentacion = new JPanel();
+	}
+
+
+	private void addPanelPresentacion(JPanel panel) {
+		panelPresentacion = new JPanel();
 		panelPresentacion.setLayout(new BorderLayout());
 		panel.add(panelPresentacion);
 		
@@ -164,14 +209,26 @@ public class Ventana2 {
 		textArea.setBackground(Color.LIGHT_GRAY);
 		textArea.setText("...");
 		panelPresentacion.add(textArea, BorderLayout.CENTER);
-		
-		JPanel panelBotones= new JPanel();
+	}
+	
+	
+	private void addBotones(JPanel panel) {
+		panelBotones= new JPanel();
 		panel.add(panelBotones);
 		
 		JButton btnOk = new JButton("OK");
+		
 		panelBotones.add(btnOk);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				framePrincipal.dispose();
+				System.exit(0);
+			}
+		});
 		panelBotones.add(btnCancel);
 	}
 }

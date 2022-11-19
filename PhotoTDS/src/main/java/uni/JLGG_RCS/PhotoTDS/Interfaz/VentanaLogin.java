@@ -24,8 +24,10 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-public class Ventana1 {
+public class VentanaLogin {
 
+	private static final int ANCHURA = 400;
+	private static final int ALTURA = 400;
 	private JFrame frame;
 	private JTextField textField;
 	private JPasswordField passwordField;
@@ -37,7 +39,7 @@ public class Ventana1 {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Ventana1 window = new Ventana1();
+					VentanaLogin window = new VentanaLogin();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,7 +51,7 @@ public class Ventana1 {
 	/**
 	 * Create the application.
 	 */
-	public Ventana1() {
+	public VentanaLogin() {
 		initialize();
 	}
 
@@ -83,6 +85,7 @@ public class Ventana1 {
 		JButton btnCrearCuenta = new JButton("Crear una cuenta");
 		btnCrearCuenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 		btnCrearCuenta.setPreferredSize(new Dimension(275, 27));
