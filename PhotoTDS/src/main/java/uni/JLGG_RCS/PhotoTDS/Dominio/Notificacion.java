@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Notificacion {
 
+	private int id;
 	private final Date fecha = new Date();
 	private final Publicacion novedad;
 	
@@ -17,5 +18,13 @@ public class Notificacion {
 	
 	public Publicacion getPublicacion() {
 		return novedad;
+	}
+
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 }

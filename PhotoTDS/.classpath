@@ -24,6 +24,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/ruben/Descargas/ServidorPersistenciaMySQL/DriverPersistencia.jar"/>
+	<classpathentry kind="lib" path="lib/lib/eclipselink-2.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/lib/javax.persistence-api-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/lib/mysql-connector-java-5.1.18-bin.jar"/>
+	<classpathentry kind="lib" path="lib/DriverPersistencia.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

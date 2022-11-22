@@ -20,5 +20,17 @@ public class Album extends Publicacion {
 	public List<Foto> getFotos() {
 		return new ArrayList<Foto>(fotos);
 	}
+	
+	/**
+	 * Puesto que un "Me gusta" al album significa un "Me gusta" para
+	 * cada publicacion que contiene, su numero de "Me gusta" corresponde al
+	 * número de usuarios que a los que les ha gustado el album (los "Me gusta"
+	 * recibidos como Publicacion) multiplicado por el numero de fotos del 
+	 * album.
+	 */
+	@Override
+	public int getMeGusta() {
+		return super.getMeGusta()*fotos.size();
+	}
 
 }

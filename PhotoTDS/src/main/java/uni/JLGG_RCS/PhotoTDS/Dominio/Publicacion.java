@@ -8,6 +8,7 @@ public class Publicacion {
 	static final int ME_GUSTA_INICIAL = 0;
 	static final int MAX_HASHTAG_CHARS = 16; // Incluye el '#'
 	
+	private int id;
 	private String titulo;
 	private final Date fecha;
 	private String descripcion;
@@ -28,6 +29,14 @@ public class Publicacion {
 		this.usuario = usuario;
 	}
 
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -62,7 +71,7 @@ public class Publicacion {
 		return fecha;
 	}
 
-	public int getMegusta() {
+	public int getMeGusta() {
 		return megusta;
 	}
 	

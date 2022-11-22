@@ -1,20 +1,21 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
-import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 public class Usuario {
 	
+	private int id;
 	private final String nombreCompleto;
 	private final String nombreUsuario;
 	private final Date fechaNacimiento;
 	private final String email;
 	
 	private String presentacion;
-	private String contraseña;
-	private Image foto;
+	private String password;
+	private Foto fotoPerfil;
 	
 	private List<Usuario> seguidores;
 	private List<Foto> fotos;
@@ -25,7 +26,7 @@ public class Usuario {
 		this.nombreCompleto = nombreCompleto;
 		this.nombreUsuario = nombreUsuario;
 		this.email = email;
-		this.contraseña = contraseña;
+		this.password = contraseña;
 		this.fechaNacimiento = fechaNacimiento;
 				
 		this.seguidores = new ArrayList<Usuario>();
@@ -34,6 +35,14 @@ public class Usuario {
 		this.notificaciones = new ArrayList<Notificacion>();
 	}
 
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getPresentacion() {
 		return presentacion;
 	}
@@ -44,19 +53,19 @@ public class Usuario {
 	}
 
 	public String getContraseña() {
-		return contraseña;
+		return password;
 	}
 
 	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
+		this.password = contraseña;
 	}
 
-	public Image getFoto() {
-		return foto;
+	public Foto getFotoPerfil() {
+		return fotoPerfil;
 	}
 
-	public void setFoto(Image foto) {
-		this.foto = foto;
+	public void setFotoPerfil(Foto foto) {
+		this.fotoPerfil = foto;
 	}
 
 	public String getNombreCompleto() {
@@ -78,19 +87,55 @@ public class Usuario {
 	public List<Usuario> getSeguidores() {
 		return new ArrayList<Usuario>(seguidores);
 	}
+	
+	public void addSeguidor(Usuario seguidor) {
+		seguidores.add(seguidor);
+	}
+
+	public void addSeguidores(Collection<Usuario> seguidores) {
+		seguidores.addAll(seguidores);
+	}
 
 	public List<Foto> getFotos() {
 		return new ArrayList<Foto>(fotos);
+	}
+	
+	public void addFoto(Foto foto) {
+		fotos.add(foto);
+	}
+
+	public void addFotos(Collection<Foto> fotos) {
+		this.fotos.addAll(fotos);
 	}
 	
 	public List<Album> getAlbumes() {
 		return new ArrayList<Album>(albumes);
 	}
 	
+	public void addAlbum(Album album) {
+		albumes.add(album);
+	}
+
+	public void addAlbumes(Collection<Album> albumes) {
+		this.albumes.addAll(albumes);
+	}
+	
+	public List<Notificacion> getNotificaciones() {
+		return new ArrayList<Notificacion>(notificaciones);
+	}
+	
+	public void addNotificacion(Notificacion notificacion) {
+		notificaciones.add(notificacion);
+	}
+
+	public void addNotificaciones(Collection<Notificacion> notifiaciones) {
+		this.notificaciones.addAll(notifiaciones);
+	}
+	
 	public int getMeGustaTotales() {
 		int total = 0;
-		fotos.stream().map(f -> f.getMegusta()).reduce(total, (i1,i2) -> i1+i2);
-		albumes.stream().map(f -> f.getMegusta()).reduce(total, (i1,i2) -> i1+i2);
+		fotos.stream().map(f -> f.getMeGusta()).reduce(total, (i1,i2) -> i1+i2);
+		albumes.stream().map(f -> f.getMeGusta()).reduce(total, (i1,i2) -> i1+i2);
 		return total;
 	}
 
