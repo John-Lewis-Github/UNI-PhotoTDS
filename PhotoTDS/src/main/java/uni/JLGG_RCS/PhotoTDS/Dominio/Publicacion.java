@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Publicacion {
+public class Publicacion implements Persistente {
 	static final int ME_GUSTA_INICIAL = 0;
 	static final int MAX_HASHTAG_CHARS = 16; // Incluye el '#'
 	

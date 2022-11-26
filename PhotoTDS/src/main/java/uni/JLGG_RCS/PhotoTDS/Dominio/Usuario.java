@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public class Usuario {
+public class Usuario implements Persistente {
 	
 	private int id;
 	private final String nombreCompleto;
@@ -13,8 +13,8 @@ public class Usuario {
 	private final Date fechaNacimiento;
 	private final String email;
 	
-	private String presentacion;
 	private String password;
+	private String presentacion;
 	private Foto fotoPerfil;
 	
 	private List<Usuario> seguidores;
@@ -22,11 +22,10 @@ public class Usuario {
 	private List<Album> albumes;
 	private List<Notificacion> notificaciones;
 	
-	public Usuario(String nombreCompleto, String nombreUsuario, String email, String contraseña, Date fechaNacimiento) {
+	public Usuario(String nombreCompleto, String nombreUsuario, Date fechaNacimiento, String email) {
 		this.nombreCompleto = nombreCompleto;
 		this.nombreUsuario = nombreUsuario;
 		this.email = email;
-		this.password = contraseña;
 		this.fechaNacimiento = fechaNacimiento;
 				
 		this.seguidores = new ArrayList<Usuario>();
@@ -52,12 +51,12 @@ public class Usuario {
 		this.presentacion = presentacion.substring(0, 200);
 	}
 
-	public String getContraseña() {
+	public String getPassword() {
 		return password;
 	}
 
-	public void setContraseña(String contraseña) {
-		this.password = contraseña;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Foto getFotoPerfil() {

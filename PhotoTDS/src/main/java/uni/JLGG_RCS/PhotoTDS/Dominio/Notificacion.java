@@ -2,7 +2,7 @@ package uni.JLGG_RCS.PhotoTDS.Dominio;
 
 import java.util.Date;
 
-public class Notificacion {
+public class Notificacion implements Persistente {
 
 	private int id;
 	private final Date fecha = new Date();

@@ -1,4 +1,4 @@
-package Persistencia;
+package uni.JLGG_RCS.PhotoTDS.Persistencia;
 
 /**
  * Factoria abstracta DAO.
@@ -34,4 +34,5 @@ public abstract class FactoriaDAO {
 	// Metodos factoria para obtener adaptadores
 	
 	public abstract UsuarioDAO getUsuarioDAO();	
+	public abstract PublicacionDAO getPublicacionDAO();	
 }
