@@ -16,6 +16,7 @@ public class Usuario implements Persistente {
 	private String password;
 	private String presentacion;
 	private Foto fotoPerfil;
+	private boolean premium;
 	
 	private List<Usuario> seguidores;
 	private List<Foto> fotos;
@@ -27,6 +28,7 @@ public class Usuario implements Persistente {
 		this.nombreUsuario = nombreUsuario;
 		this.email = email;
 		this.fechaNacimiento = fechaNacimiento;
+		this.premium = false;
 				
 		this.seguidores = new ArrayList<Usuario>();
 		this.fotos = new ArrayList<Foto>();
@@ -65,6 +67,14 @@ public class Usuario implements Persistente {
 
 	public void setFotoPerfil(Foto foto) {
 		this.fotoPerfil = foto;
+	}
+	
+	public boolean isPremium() {
+		return premium;
+	}
+	
+	public void setPremium(boolean premium) {
+		this.premium = premium;
 	}
 
 	public String getNombreCompleto() {

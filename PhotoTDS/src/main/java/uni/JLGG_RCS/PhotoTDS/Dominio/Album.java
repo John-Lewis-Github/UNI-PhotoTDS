@@ -8,8 +8,8 @@ public class Album extends Publicacion {
 
 	private List<Foto> fotos;
 	
-	public Album(String titulo, Date fecha, String descripcion, Usuario usuario) {
-		super(titulo, fecha, descripcion, usuario);
+	public Album(String titulo, Date fecha, String descripcion) {
+		super(titulo, fecha, descripcion);
 		this.fotos = new ArrayList<Foto>();
 	}
 	
@@ -22,15 +22,24 @@ public class Album extends Publicacion {
 	}
 	
 	/**
-	 * Puesto que un "Me gusta" al album significa un "Me gusta" para
-	 * cada publicacion que contiene, su numero de "Me gusta" corresponde al
-	 * número de usuarios que a los que les ha gustado el album (los "Me gusta"
-	 * recibidos como Publicacion) multiplicado por el numero de fotos del 
-	 * album.
+	 * Un "Me gusta" para el album indica un "Me gusta" para cada publicacion
+	 * del album
+	 */
+	@Override
+	public void darMeGusta() {
+		fotos.stream().forEach(f -> f.darMeGusta());
+	}
+	
+	/**
+	 * Se devuelven los "Me gusta" de todas las publicaciones del album
 	 */
 	@Override
 	public int getMeGusta() {
-		return super.getMeGusta()*fotos.size();
+		return fotos.stream()
+				.map(f -> f.getMeGusta())
+				.reduce(0, (x,y)->x+y);
 	}
+	
+	
 
 }

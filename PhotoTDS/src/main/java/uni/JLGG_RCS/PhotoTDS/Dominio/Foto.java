@@ -13,8 +13,8 @@ public class Foto extends Publicacion {
 	private String path;
 	private BufferedImage imagen;
 	
-	public Foto(String titulo, Date fecha, String descripcion, Usuario usuario, String path) {
-		super(titulo, fecha, descripcion, usuario);
+	public Foto(String titulo, Date fecha, String descripcion, String path) {
+		super(titulo, fecha, descripcion);
 		this.path = path;
 		try {
 			this.imagen = ImageIO.read(new File(path));

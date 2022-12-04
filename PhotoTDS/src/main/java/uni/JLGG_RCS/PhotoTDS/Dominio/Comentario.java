@@ -1,20 +1,42 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
-public class Comentario {
+import java.util.Date;
+
+public class Comentario implements Persistente {
 	
+	private int id;
 	private final String texto;
-	private final Usuario comentador;
+	private final Date fecha;
+	private Usuario comentador;
 	
-	public Comentario(String texto, Usuario comentador) {
+	public Comentario(String texto, Date fecha) {
 		this.texto = texto;
-		this.comentador = comentador;
+		this.fecha = fecha;
 	}
-	
+
 	public String getTexto() {
 		return texto;
 	}
 	
+	public Date getFecha() {
+		return fecha;
+	}
+
 	public Usuario getComentador() {
 		return comentador;
+	}
+	
+	public void setComentador(Usuario comentador) {
+		this.comentador = comentador;
+	}
+	
+	@Override
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
 	}
 }

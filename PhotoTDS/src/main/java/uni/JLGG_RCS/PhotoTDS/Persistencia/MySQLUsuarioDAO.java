@@ -36,6 +36,7 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	private static final String PRESENTACION = "presentacion";
 	private static final String PASSWORD = "password";
 	private static final String FOTO_PERFIL = "fotoPerfil";
+	private static final String PREMIUM = "premium";
 	private static final String SEGUIDORES = "seguidores";
 	private static final String FOTOS = "fotos";
 	private static final String ALBUMES = "albumes";
@@ -87,7 +88,7 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	 * @param usuario El usuario a partir del que formar una entidad
 	 * @return Una entidad creada a partir del usuario
 	 */
-	public Entidad UsuarioAEntidad(Usuario usuario) {
+	private Entidad UsuarioAEntidad(Usuario usuario) {
 		
 		Entidad entidad = new Entidad();
 		entidad.setNombre(USUARIO);
@@ -99,7 +100,8 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 				new Propiedad(EMAIL, usuario.getEmail()),
 				new Propiedad(PASSWORD, usuario.getPassword()),
 				new Propiedad(PRESENTACION, usuario.getPresentacion()),
-				new Propiedad(FOTO_PERFIL, Integer.toString(usuario.getFotoPerfil().getId()))
+				new Propiedad(FOTO_PERFIL, Integer.toString(usuario.getFotoPerfil().getId())),
+				new Propiedad(PREMIUM, Boolean.toString(usuario.isPremium()))
 				));
 		
 		/**
@@ -125,11 +127,11 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	}
 	
 	/**
-	 * Crea un usuario a partir de una entidad
+	 * Crea una instancia nueva de Usuario a partir de una entidad
 	 * @param entidad la entidad que genera el usuario
 	 * @return un usuario 
 	 */
-	public Usuario EntidadAUsuario(Entidad entidad) { 
+	private Usuario EntidadAUsuario(Entidad entidad) { 
 		// Recuperamos atributos que no referencian a entidades
 		
 		String nombreCompleto = serv.recuperarPropiedadEntidad(entidad, NOMBRE_COMPLETO);
@@ -158,9 +160,13 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		String fotoPerfilId = serv.recuperarPropiedadEntidad(entidad, NOMBRE_COMPLETO);
 		Foto fotoPerfil = (Foto) pubDAO.get(Integer.parseInt(fotoPerfilId));
 		
+		String premiumStr = serv.recuperarPropiedadEntidad(entidad, PREMIUM);
+		boolean premium = Boolean.parseBoolean(premiumStr);
+		
 		usuario.setPassword(password);
 		usuario.setPresentacion(presentacion);
 		usuario.setFotoPerfil(fotoPerfil);
+		usuario.setPremium(premium);
 		
 		// Se transforman las listas de identificadores enteros a listas de atributos
 		// En funcion del tipo de atributo se usan diferentes DAOs
@@ -242,6 +248,9 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 				Foto fotoPerfil = usuario.getFotoPerfil();
 				p.setValor(Integer.toString(fotoPerfil.getId()));
 				break;
+			case PREMIUM:
+				p.setValor(Boolean.toString(usuario.isPremium()));
+				break;
 			case SEGUIDORES: 
 				p.setValor(idList2String(usuario.getSeguidores()));
 				break;
@@ -267,7 +276,6 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		 * la entidad que tiene su mismo id. Para ello se consulta directamente
 		 * en el Pool. Si no está, entonces se crea la instancia en cuestion.
 		 */
-		
 		Usuario usuario = (Usuario) pool.getObject(id);
 		if (usuario == null)
 			usuario = EntidadAUsuario(serv.recuperarEntidad(id));
@@ -280,6 +288,7 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		/**
 		 *  Usa el metodo get() para recuperar los usuarios de todas las entidades
 		 *  que representan a usuarios, tomando los identificadores de cada una
+		 *  El metodo get(id) ya maneja el Pool y no hay que preocuparse por el
 		 */
 		return serv.recuperarEntidades(USUARIO).stream()
 				.map(e -> e.getId())

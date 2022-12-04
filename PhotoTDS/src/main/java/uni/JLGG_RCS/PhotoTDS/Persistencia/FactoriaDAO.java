@@ -23,7 +23,6 @@ public abstract class FactoriaDAO {
 		} 
 		return unicaInstancia;
 	}
-	
 
 	public static FactoriaDAO getInstancia() throws DAOException{
 		return getInstancia(FactoriaDAO.DAO_MYSQL);
