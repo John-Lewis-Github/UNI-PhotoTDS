@@ -20,8 +20,8 @@ public class Hashtag {
 		if (contenido.length() > MAX_HASHTAG_CHARS) {
 			throw new IllegalArgumentException(ERROR_LONGITUD);
 		}
-		if (!contenido.substring(1).matches("[a-zA-Z]")) {
-			throw new IllegalArgumentException(ERROR_CARACTERES);
+		if (!contenido.substring(1).matches("[a-zA-Z]+")) {
+			throw new IllegalArgumentException(ERROR_CARACTERES + "Hashtag: " + contenido.substring(1));
 		}
 		this.contenido = contenido;
 	}

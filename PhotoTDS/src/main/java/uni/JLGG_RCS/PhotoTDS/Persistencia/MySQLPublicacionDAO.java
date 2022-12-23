@@ -21,8 +21,7 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 
-public enum MySQLPublicacionDAO implements PublicacionDAO {
-	INSTANCE;
+public abstract class MySQLPublicacionDAO<T extends Publicacion> implements PublicacionDAO<T> {
 	
 	private static final String PUBLICACION = "Publicacion";
 	
@@ -40,7 +39,7 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 	private DAOPool pool;
 	private DateFormat dformat;
 	
-	private MySQLPublicacionDAO() {
+	protected MySQLPublicacionDAO() {
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
 		usDAO = MySQLUsuarioDAO.INSTANCE;
 		comDAO = MySQLComentarioDAO.INSTANCE;
@@ -49,41 +48,20 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 	}
 	
 	/**
-	 * Construye una cadena con los identificadores de una lista de 
-	 * elementos persistentes.
-	 * 
-	 * @param l la lista con elementos persistentes
-	 * @return una cadena con los identificadores separados por espacios
-	 */
-	private <T extends Persistente> String idList2String(List<T> l) {
-		return l.stream()
-				.map(e -> e.getId())
-				.map(id -> Integer.toString(id))
-				.reduce("", (s1, s2) -> s1+" "+s2);
-	}
-	
-	/**
-	 * Devuelve una lista de identificadores enteros a partir de una
-	 * cadena que los contiene separados por espacios.
-	 * 
-	 * @param s la cadena con los identificadores
-	 * @return una lista de enteros
-	 */
-	private List<Integer> string2IdList(String s) {
-		return Arrays.asList(s.split(" ")).stream()
-				.map(e -> Integer.parseInt(e))
-				.toList();
-	}
-	
-	/**
 	 * Crea una nueva entidad a partir de una publicacion
 	 * @param publicacion la publicacion a partir de la que formar una entidad
 	 * @return Una entidad creada a partir de la publicacion
 	 */
-	private Entidad PublicacionAEntidad(Publicacion publicacion) {
+	protected Entidad PublicacionAEntidad(T publicacion) {
+		
+		// Se trata primero el caso nulo
+		if (publicacion == null)
+			return null;
 		
 		Entidad entidad = new Entidad();
-		entidad.setNombre(PUBLICACION);
+		
+		// El nombre de la entidad viene dado por el tipo de T
+		entidad.setNombre(publicacion.getClass().getName());
 
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(TITULO, publicacion.getTitulo()),
@@ -104,7 +82,7 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 		 *  a partir de sus identificadores, que se concatenarán para
 		 *  formar un String
 		 */
-		String comentarios = idList2String(publicacion.getComentarios());
+		String comentarios = Persistente.idList2String(publicacion.getComentarios());
 		listaPropiedades.add(new Propiedad(COMENTARIOS, comentarios));
 		
 		entidad.setPropiedades(listaPropiedades);
@@ -113,24 +91,32 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 	}
 	
 	/**
+	 * Método factoría que permite trabajar con instancias que hereden
+	 * de la clase Publicacion. Basta con que usen su constructor principal
+	 * 
+	 * @param titulo
+	 * @param Publicacion
+	 * @return
+	 */
+	protected abstract T crearInstancia(String titulo, String descripcion);
+	
+	/**
 	 * Crea una instancia nueva de Publicacion a partir de una entidad
 	 * @param entidad la entidad que genera la publicacion
 	 * @return una publicacion 
 	 */
-	private Publicacion EntidadAPublicacion(Entidad entidad) { 
-		// Recuperamos atributos que no referencian a entidades
+	protected T EntidadAPublicacion(Entidad entidad) { 
 		
+		// Se trata primero el caso nulo
+		if (entidad == null)
+			return null;
+		
+		// Recuperamos atributos que no referencian a entidades
 		String titulo = serv.recuperarPropiedadEntidad(entidad, TITULO);
-		Date fecha = null;
-		try {
-			fecha = dformat.parse(serv.recuperarPropiedadEntidad(entidad, FECHA));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 		String descripcion = serv.recuperarPropiedadEntidad(entidad, DESCRIPCION);
 		
 		// Creamos la publicacion y le asignamos su identificador
-		Publicacion publicacion = new Publicacion(titulo, fecha, descripcion);
+		T publicacion = crearInstancia(titulo, descripcion);
 		publicacion.setId(entidad.getId());
 
 		// Lo registramos en el Pool
@@ -139,11 +125,19 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 		// Ahora podemos procesar el resto de los atributos, pues no habrá
 		// problemas con las referencias bidireccionales
 		
+		Date fecha = null;
+		try {
+			fecha = dformat.parse(serv.recuperarPropiedadEntidad(entidad, FECHA));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		publicacion.setFecha(fecha);
+		
 		int megusta = Integer.parseInt(serv.recuperarPropiedadEntidad(entidad, ME_GUSTA));
 		publicacion.setMeGusta(megusta);
 		
 		// Se transforman las listas de identificadores enteros a listas de atributos
-		List<Integer> comentariosIds = string2IdList(serv.recuperarPropiedadEntidad(entidad, COMENTARIOS));
+		List<Integer> comentariosIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, COMENTARIOS));
 		List<Comentario> comentarios = comentariosIds.stream()
 				.map(id -> comDAO.get(id))
 				.toList();
@@ -158,28 +152,29 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 	}
 	
 	@Override
-	public void create(Publicacion publicacion) {
+	public void create(T publicacion) {
 		/**
 		 * Crea directamente una entidad para la nueva publicacion y la registra
 		 * mediante el servicio de persistencia. 
 		 */
 		Entidad entidad = PublicacionAEntidad(publicacion);
-		serv.registrarEntidad(entidad);
+		entidad = serv.registrarEntidad(entidad);
 		publicacion.setId(entidad.getId());
 	}
 
 	@Override
-	public boolean delete(Publicacion publicacion) {
+	public boolean delete(T publicacion) {
 		/**
 		 * Borra la entidad que tenga el mismo id que la publicacion
 		 * Por tanto, la operacion puede no borrar ninguna entidad
 		 */
 		Entidad entidad = serv.recuperarEntidad(publicacion.getId());
+		pool.removeObject(publicacion.getId());
 		return serv.borrarEntidad(entidad);
 	}
 
 	@Override
-	public void update(Publicacion publicacion) {
+	public void update(T publicacion) {
 		// Se recupera la entidad asociada al usuario
 		Entidad entidad = serv.recuperarEntidad(publicacion.getId());
 
@@ -199,7 +194,7 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 				p.setValor(Integer.toString(publicacion.getMeGusta()));
 				break;
 			case COMENTARIOS:
-				p.setValor(idList2String(publicacion.getComentarios()));
+				p.setValor(Persistente.idList2String(publicacion.getComentarios()));
 				break;
 			case USUARIO:
 				Usuario usuario = publicacion.getUsuario();
@@ -208,17 +203,21 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 			default:
 				break;
 			}
+			serv.modificarPropiedad(p);
 		}
+		
+		// Se reemplaza el objeto en el pool
+		pool.addObject(publicacion.getId(), publicacion);
 	}
 
 	@Override
-	public Publicacion get(int id) {
+	public T get(int id) {
 		/**
 		 * Se comprueba si se ha creado ya una instancia de Publicacion a partir de
 		 * la entidad que tiene su mismo id. Para ello se consulta directamente
 		 * en el Pool. Si no está, entonces se crea la instancia en cuestion.
 		 */
-		Publicacion publicacion = (Publicacion) pool.getObject(id);
+		T publicacion = (T) pool.getObject(id);
 		if (publicacion == null)
 			publicacion = EntidadAPublicacion(serv.recuperarEntidad(id));
 		
@@ -226,13 +225,14 @@ public enum MySQLPublicacionDAO implements PublicacionDAO {
 	}
 
 	@Override
-	public List<Publicacion> getAll() {
+	public List<T> getAll() {
 		/**
 		 *  Usa el metodo get() para recuperar las publicaciones de todas las entidades
 		 *  que representan a publicaciones, tomando los identificadores de cada una
 		 *  El metodo get(id) ya maneja el Pool y no hay que preocuparse por el
 		 */
-		return serv.recuperarEntidades(PUBLICACION).stream()
+		T aux = crearInstancia("","");
+		return serv.recuperarEntidades(aux.getClass().getName()).stream()
 				.map(e -> e.getId())
 				.map(id -> get(id))
 				.toList();

@@ -2,7 +2,6 @@ package uni.JLGG_RCS.PhotoTDS.Persistencia;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import beans.Entidad;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Persistente;
 
 public enum DAOPool {
@@ -20,7 +19,7 @@ public enum DAOPool {
 	 * @param object la el objeto persistente a guardar
 	 */
 	public void addObject(int id, Persistente object) { 
-		pool.putIfAbsent(id, object);
+		pool.put(id, object);
 	}
 	
 	/**
@@ -45,6 +44,10 @@ public enum DAOPool {
 	 */
 	public boolean contains(int id){
 		return pool.containsKey(id);
+	}
+	
+	public void removeObject(int id) {
+		pool.remove(id);
 	}
 }
 

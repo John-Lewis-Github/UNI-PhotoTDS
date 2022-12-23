@@ -19,7 +19,8 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 public enum MySQLComentarioDAO implements ComentarioDAO {
 	INSTANCE;
 	
-	private static final String COMENTARIO = "comentario";
+	private static final String COMENTARIO = Comentario.class.getName()
+			;
 	private static final String TEXTO = "texto";
 	private static final String FECHA = "fecha";
 	private static final String COMENTADOR = "comentador";
@@ -42,6 +43,11 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 	 * @return Una entidad creada a partir del comentario
 	 */
 	private Entidad ComentarioAEntidad(Comentario comentario) {
+		
+		// Se trata primero el caso nulo
+		if (comentario == null)
+			return null;
+		
 		Entidad entidad = new Entidad();
 		entidad.setNombre(COMENTARIO);
 		
@@ -61,6 +67,11 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 	 * @return un comentario 
 	 */
 	public Comentario EntidadAComentario(Entidad entidad) {
+		
+		// Se trata primero el caso nulo
+		if (entidad == null)
+			return null;
+		
 		// Recuperamos atributos que no referencian a entidades
 		String texto = serv.recuperarPropiedadEntidad(entidad, TEXTO);
 		Date fecha = null;
@@ -93,7 +104,7 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		 * mediante el servicio de persistencia. 
 		 */
 		Entidad entidad = ComentarioAEntidad(comentario);
-		serv.registrarEntidad(entidad);
+		entidad = serv.registrarEntidad(entidad);
 		comentario.setId(entidad.getId());
 		
 	}
@@ -105,6 +116,7 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		 * Por tanto, la operacion puede no borrar ninguna entidad
 		 */
 		Entidad entidad = serv.recuperarEntidad(comentario.getId());
+		pool.removeObject(comentario.getId());
 		return serv.borrarEntidad(entidad);
 	}
 
@@ -129,7 +141,11 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 			default:
 				break;
 			}
+			serv.modificarPropiedad(p);
 		}
+		
+		// Se reemplaza el objeto en el pool
+		pool.addObject(comentario.getId(), comentario);
 	}
 
 	@Override

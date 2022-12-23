@@ -1,12 +1,15 @@
 package uni.JLGG_RCS.PhotoTDS.Persistencia;
 
+import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
+import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
+
 /**
  * Factoria abstracta DAO.
  */
 
 public abstract class FactoriaDAO {
 	
-	public static final String DAO_MYSQL = "Persistencia.MySQLFactoriaDAO";
+	public static final String DAO_MYSQL = "uni.JLGG_RCS.PhotoTDS.Persistencia.MySQLFactoriaDAO";
 
 	private static FactoriaDAO unicaInstancia = null;
 	
@@ -33,5 +36,9 @@ public abstract class FactoriaDAO {
 	// Metodos factoria para obtener adaptadores
 	
 	public abstract UsuarioDAO getUsuarioDAO();	
-	public abstract PublicacionDAO getPublicacionDAO();	
+	public abstract PublicacionDAO<Foto> getFotoDAO();
+	public abstract PublicacionDAO<Album> getAlbumDAO();
+	public abstract NotificacionDAO getNotificacionDAO();
+	public abstract ComentarioDAO getComentarioDAO();
+	
 }

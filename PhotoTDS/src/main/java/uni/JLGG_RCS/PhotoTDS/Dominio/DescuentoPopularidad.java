@@ -7,12 +7,13 @@ public class DescuentoPopularidad implements Descuento {
 	private static final double DESCUENTO_1 = 0.1;
 	private static final double DESCUENTO_2 = 0.3;
 	private Usuario usuario;
+	
 	public DescuentoPopularidad(Usuario u) {
 		usuario = u;
 	}
 
 	@Override
-	public double aplicarDescuento() {
+	public double getDescuento() {
 		if (usuario.getMeGustaTotales() >= MEGUSTA_THRESHOLD_1)
 			return DESCUENTO_1;
 		if (usuario.getMeGustaTotales() >= MEGUSTA_THRESHOLD_2)

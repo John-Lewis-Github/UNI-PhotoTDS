@@ -13,8 +13,14 @@ public class Foto extends Publicacion {
 	private String path;
 	private BufferedImage imagen;
 	
-	public Foto(String titulo, Date fecha, String descripcion, String path) {
-		super(titulo, fecha, descripcion);
+	public Foto(String titulo, String descripcion) {
+		super(titulo, descripcion);
+		this.path = null;
+		this.imagen = null;
+	}
+	
+	public Foto(String titulo, String descripcion, String path) {
+		super(titulo, descripcion);
 		this.path = path;
 		try {
 			this.imagen = ImageIO.read(new File(path));
@@ -25,6 +31,15 @@ public class Foto extends Publicacion {
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
+		try {
+			this.imagen = ImageIO.read(new File(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public BufferedImage getImagen () {

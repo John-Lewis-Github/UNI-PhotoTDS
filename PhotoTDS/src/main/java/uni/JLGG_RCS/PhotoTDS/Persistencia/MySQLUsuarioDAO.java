@@ -43,44 +43,19 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	private static final String NOTIFICACIONES = "notificaciones";
 
 	private ServicioPersistencia serv;
-	private PublicacionDAO pubDAO;
+	private PublicacionDAO<Foto> fotoDAO;
+	private PublicacionDAO<Album> albumDAO;
 	private NotificacionDAO notiDAO;
 	private DAOPool pool;
 	private DateFormat dformat;
 	
 	private MySQLUsuarioDAO() {
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
-		pubDAO = MySQLPublicacionDAO.INSTANCE;
+		fotoDAO = MySQLFotoDAO.getInstance();
+		albumDAO = MySQLAlbumDAO.getInstance();
 		notiDAO = MySQLNotificacionDAO.INSTANCE;
 		pool = DAOPool.INSTANCE;
 		dformat = new SimpleDateFormat("dd/MM/yyyy");
-	}
-	
-	/**
-	 * Construye una cadena con los identificadores de una lista de 
-	 * elementos persistentes.
-	 * 
-	 * @param l la lista con elementos persistentes
-	 * @return una cadena con los identificadores separados por espacios
-	 */
-	private <T extends Persistente> String idList2String(List<T> l) {
-		return l.stream()
-				.map(e -> e.getId())
-				.map(id -> Integer.toString(id))
-				.reduce("", (s1, s2) -> s1+" "+s2);
-	}
-	
-	/**
-	 * Devuelve una lista de identificadores enteros a partir de una
-	 * cadena que los contiene separados por espacios.
-	 * 
-	 * @param s la cadena con los identificadores
-	 * @return una lista de enteros
-	 */
-	private List<Integer> string2IdList(String s) {
-		return Arrays.asList(s.split(" ")).stream()
-				.map(e -> Integer.parseInt(e))
-				.toList();
 	}
 	
 	/**
@@ -90,17 +65,27 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	 */
 	private Entidad UsuarioAEntidad(Usuario usuario) {
 		
+		// Se trata primero el caso nulo
+		if (usuario == null)
+			return null;
+		
 		Entidad entidad = new Entidad();
 		entidad.setNombre(USUARIO);
+		
+		Date fecha = usuario.getFechaNacimiento();
+		String dateString = (fecha == null) ? "" : dformat.format(fecha);
+		
+		Foto fotoPerfil = usuario.getFotoPerfil();
+		String fotoPerfilId = (fotoPerfil == null) ? "" : Integer.toString(fotoPerfil.getId());
 
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(NOMBRE_COMPLETO, usuario.getNombreCompleto()),
 				new Propiedad(NOMBRE_USUARIO, usuario.getNombreUsuario()),
-				new Propiedad(FECHA, dformat.format(usuario.getFechaNacimiento())),
+				new Propiedad(FECHA, dateString),
 				new Propiedad(EMAIL, usuario.getEmail()),
 				new Propiedad(PASSWORD, usuario.getPassword()),
 				new Propiedad(PRESENTACION, usuario.getPresentacion()),
-				new Propiedad(FOTO_PERFIL, Integer.toString(usuario.getFotoPerfil().getId())),
+				new Propiedad(FOTO_PERFIL, fotoPerfilId),
 				new Propiedad(PREMIUM, Boolean.toString(usuario.isPremium()))
 				));
 		
@@ -109,16 +94,16 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		 *  a partir de sus identificadores, que se concatenarán para
 		 *  formar un String
 		 */
-		String seguidores = idList2String(usuario.getSeguidores());
+		String seguidores = Persistente.idList2String(usuario.getSeguidores());
 		listaPropiedades.add(new Propiedad(SEGUIDORES, seguidores));
 		
-		String fotos = idList2String(usuario.getFotos());
+		String fotos = Persistente.idList2String(usuario.getFotos());
 		listaPropiedades.add(new Propiedad(FOTOS, fotos));
 		
-		String albumes = idList2String(usuario.getAlbumes());
+		String albumes = Persistente.idList2String(usuario.getAlbumes());
 		listaPropiedades.add(new Propiedad(ALBUMES, albumes));
 		
-		String notificaciones = idList2String(usuario.getNotificaciones());
+		String notificaciones = Persistente.idList2String(usuario.getNotificaciones());
 		listaPropiedades.add(new Propiedad(NOTIFICACIONES, notificaciones));
 		
 		entidad.setPropiedades(listaPropiedades);
@@ -132,8 +117,12 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	 * @return un usuario 
 	 */
 	private Usuario EntidadAUsuario(Entidad entidad) { 
-		// Recuperamos atributos que no referencian a entidades
 		
+		// Se trata primero el caso nulo
+		if (entidad == null)
+			return null;
+		
+		// Recuperamos atributos que no referencian a entidades
 		String nombreCompleto = serv.recuperarPropiedadEntidad(entidad, NOMBRE_COMPLETO);
 		String nombreUsuario = serv.recuperarPropiedadEntidad(entidad, NOMBRE_USUARIO);
 		Date fecha = null;
@@ -143,9 +132,10 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 			e.printStackTrace();
 		}
 		String email = serv.recuperarPropiedadEntidad(entidad, EMAIL);
+		String password = serv.recuperarPropiedadEntidad(entidad, PASSWORD);
 		
 		// Creamos el usuario y le asignamos su identificador
-		Usuario usuario = new Usuario(nombreCompleto, nombreUsuario, fecha, email);
+		Usuario usuario = new Usuario(nombreCompleto, nombreUsuario, fecha, email, password);
 		usuario.setId(entidad.getId());
 
 		// Lo registramos en el Pool
@@ -155,10 +145,11 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		// problemas con las referencias bidireccionales
 		
 		String presentacion = serv.recuperarPropiedadEntidad(entidad, PRESENTACION);
-		String password = serv.recuperarPropiedadEntidad(entidad, PASSWORD);
 
-		String fotoPerfilId = serv.recuperarPropiedadEntidad(entidad, NOMBRE_COMPLETO);
-		Foto fotoPerfil = (Foto) pubDAO.get(Integer.parseInt(fotoPerfilId));
+		String fotoPerfilId = serv.recuperarPropiedadEntidad(entidad, FOTO_PERFIL);
+		Foto fotoPerfil = null;
+		if (fotoPerfilId != "")
+			fotoPerfil = fotoDAO.get(Integer.parseInt(fotoPerfilId));
 		
 		String premiumStr = serv.recuperarPropiedadEntidad(entidad, PREMIUM);
 		boolean premium = Boolean.parseBoolean(premiumStr);
@@ -170,22 +161,22 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		
 		// Se transforman las listas de identificadores enteros a listas de atributos
 		// En funcion del tipo de atributo se usan diferentes DAOs
-		List<Integer> seguidoresIds = string2IdList(serv.recuperarPropiedadEntidad(entidad, SEGUIDORES));
+		List<Integer> seguidoresIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, SEGUIDORES));
 		List<Usuario> seguidores = seguidoresIds.stream()
 				.map(id -> get(id))
 				.toList();
 		
-		List<Integer> fotosIds = string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
+		List<Integer> fotosIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
 		List<Foto> fotos = fotosIds.stream()
-				.map(id -> (Foto) pubDAO.get(id))
+				.map(id -> fotoDAO.get(id))
 				.toList();
 		
-		List<Integer> albumesIds = string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
+		List<Integer> albumesIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
 		List<Album> albumes = albumesIds.stream()
-				.map(id -> (Album) pubDAO.get(id))
+				.map(id -> albumDAO.get(id))
 				.toList();
 		
-		List<Integer> notificacionesIds = string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
+		List<Integer> notificacionesIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
 		List<Notificacion> notificaciones = notificacionesIds.stream()
 				.map(id -> notiDAO.get(id))
 				.toList();
@@ -204,7 +195,7 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		 * mediante el servicio de persistencia. 
 		 */
 		Entidad entidad = UsuarioAEntidad(usuario);
-		serv.registrarEntidad(entidad);
+		entidad = serv.registrarEntidad(entidad);
 		usuario.setId(entidad.getId());
 	}
 
@@ -215,6 +206,7 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		 * Por tanto, la operacion puede no borrar ninguna entidad
 		 */
 		Entidad entidad = serv.recuperarEntidad(usuario.getId());
+		pool.removeObject(usuario.getId());
 		return serv.borrarEntidad(entidad);
 	}
 
@@ -242,31 +234,39 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 				p.setValor(usuario.getPresentacion());
 				break;
 			case PASSWORD:
-				p.setValor(usuario.getPresentacion());
+				p.setValor(usuario.getPassword());
 				break;
 			case FOTO_PERFIL:
 				Foto fotoPerfil = usuario.getFotoPerfil();
-				p.setValor(Integer.toString(fotoPerfil.getId()));
+				if (fotoPerfil == null)
+					p.setValor("");
+				else
+					p.setValor(Integer.toString(fotoPerfil.getId()));
 				break;
 			case PREMIUM:
 				p.setValor(Boolean.toString(usuario.isPremium()));
 				break;
 			case SEGUIDORES: 
-				p.setValor(idList2String(usuario.getSeguidores()));
+				p.setValor(Persistente.idList2String(usuario.getSeguidores()));
 				break;
 			case FOTOS:
-				p.setValor(idList2String(usuario.getFotos()));
+				p.setValor(Persistente.idList2String(usuario.getFotos()));
 				break;
 			case ALBUMES:
-				p.setValor(idList2String(usuario.getAlbumes()));
+				p.setValor(Persistente.idList2String(usuario.getAlbumes()));
 				break;
 			case NOTIFICACIONES:
-				p.setValor(idList2String(usuario.getNotificaciones()));
+				p.setValor(Persistente.idList2String(usuario.getNotificaciones()));
 				break;
 			default:
 				break;
 			}
+			serv.modificarPropiedad(p);
 		}
+		
+		// Se reemplaza el objeto en el pool
+		pool.addObject(usuario.getId(), usuario);
+		
 	}
 
 	@Override

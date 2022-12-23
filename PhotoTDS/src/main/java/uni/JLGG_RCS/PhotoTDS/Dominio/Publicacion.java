@@ -11,7 +11,7 @@ public class Publicacion implements Persistente {
 	
 	private int id;
 	private String titulo;
-	private final Date fecha;
+	private Date fecha;
 	private String descripcion;
 	private int megusta;
 	private List<Hashtag> hashtags;
@@ -20,7 +20,7 @@ public class Publicacion implements Persistente {
 	
 	private final RepositorioHashtags repHashtags = RepositorioHashtags.INSTANCE;
 	
-	public Publicacion(String titulo, Date fecha, String descripcion) {
+	public Publicacion(String titulo, String descripcion) {
 		this.titulo = titulo;
 		this.fecha = new Date();
 		this.descripcion = descripcion;
@@ -49,6 +49,15 @@ public class Publicacion implements Persistente {
 		this.titulo = titulo;
 	}
 
+	public Date getFecha() {
+		return fecha;
+	}
+	
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+	
+	
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -66,12 +75,8 @@ public class Publicacion implements Persistente {
 	private void addHashtags(String texto) {
 		List<String> palabras = Arrays.asList(texto.split(" "));
 		palabras.stream()
-		.filter(s -> (s.charAt(0) == '#'))
-		.forEach(s -> this.hashtags.add(repHashtags.getHashtag(s)));
-	}
-
-	public Date getFecha() {
-		return fecha;
+				.filter(s -> (s.charAt(0) == '#'))
+				.forEach(s -> this.hashtags.add(repHashtags.getHashtag(s)));
 	}
 
 	public int getMeGusta() {

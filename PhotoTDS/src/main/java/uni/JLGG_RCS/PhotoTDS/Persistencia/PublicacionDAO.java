@@ -3,7 +3,7 @@ package uni.JLGG_RCS.PhotoTDS.Persistencia;
 import java.util.List;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 
-public interface PublicacionDAO {
+public interface PublicacionDAO<T extends Publicacion> {
 	
 	/**
 	 * Introduce una nueva publicacion dentro del servicio de persistencia y le 
@@ -11,7 +11,7 @@ public interface PublicacionDAO {
 	 * 
 	 * @param publicacion la publicacion a introducir
 	 */
-	void create(Publicacion publicacion);
+	void create (T publicacion);
 	
 	/**
 	 * Elimina a una publicacion del servicio de persistencia, de forma que no
@@ -19,7 +19,7 @@ public interface PublicacionDAO {
 	 * 
 	 * @param publicacion la publicacion a borrar
 	 */
-	boolean delete(Publicacion publicacion);
+	boolean delete(T publicacion);
 	
 	/**
 	 * Actualiza la informacion correspondiente a una publicacion en el servicio
@@ -27,7 +27,7 @@ public interface PublicacionDAO {
 	 * 
 	 * @param publicacion la publicacion a actualizar
 	 */
-	void update(Publicacion publicacion);
+	void update(T publicacion);
 	
 	/**
 	 * Recupera una publicacion del servicio de persistencia, a traves de su 
@@ -36,12 +36,12 @@ public interface PublicacionDAO {
 	 * @param id el identificador de la publicacion
 	 * @return la publicacion asociada al identificador
 	 */
-	Publicacion get(int id);
+	T get(int id);
 	
 	/** 
 	 * Recupera todas las publicaciones almacenadas por el servicio de persistencia
 	 * 
 	 * @return una lista con todas las publicaciones
 	 */
-	List<Publicacion> getAll();
+	List<T> getAll();
 }

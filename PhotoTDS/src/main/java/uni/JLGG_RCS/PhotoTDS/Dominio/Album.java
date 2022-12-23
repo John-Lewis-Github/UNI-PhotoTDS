@@ -7,9 +7,9 @@ import java.util.List;
 public class Album extends Publicacion {
 
 	private List<Foto> fotos;
-	
-	public Album(String titulo, Date fecha, String descripcion) {
-		super(titulo, fecha, descripcion);
+
+	public Album(String titulo, String descripcion) {
+		super(titulo, descripcion);
 		this.fotos = new ArrayList<Foto>();
 	}
 	
@@ -19,6 +19,10 @@ public class Album extends Publicacion {
 	
 	public List<Foto> getFotos() {
 		return new ArrayList<Foto>(fotos);
+	}
+	
+	public void setFotos(List<Foto> fotos) {
+		this.fotos = fotos;
 	}
 	
 	/**
@@ -39,7 +43,5 @@ public class Album extends Publicacion {
 				.map(f -> f.getMeGusta())
 				.reduce(0, (x,y)->x+y);
 	}
-	
-	
 
 }
