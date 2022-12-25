@@ -13,7 +13,17 @@ public class Comentario implements Persistente {
 		this.texto = texto;
 		this.fecha = fecha;
 	}
+	
+	@Override
+	public Integer getId() {
+		return id;
+	}
 
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 	public String getTexto() {
 		return texto;
 	}
@@ -28,15 +38,5 @@ public class Comentario implements Persistente {
 	
 	public void setComentador(Usuario comentador) {
 		this.comentador = comentador;
-	}
-	
-	@Override
-	public int getId() {
-		return id;
-	}
-
-	@Override
-	public void setId(int id) {
-		this.id = id;
 	}
 }

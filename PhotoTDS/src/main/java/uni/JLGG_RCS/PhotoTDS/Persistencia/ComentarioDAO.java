@@ -9,6 +9,9 @@ public interface ComentarioDAO {
 	 * Introduce un nuevo comentario dentro del servicio de persistencia y le asigna
 	 * un identificador, de forma que se pueda consultar, modificar o borrar
 	 * 
+	 * No tiene efecto si el comentario ya habia sido registrado, es decir, es una 
+	 * operacion idempotente
+	 * 
 	 * @param comentario el comentario a introducir
 	 */
 	void create(Comentario comentario);

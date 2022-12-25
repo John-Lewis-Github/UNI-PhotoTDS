@@ -4,12 +4,34 @@ import java.util.Date;
 
 public class Notificacion implements Persistente {
 
-	private int id;
-	private final Date fecha = new Date();
-	private final Publicacion novedad;
+	private Integer id;
+	private final Date fecha;
+	private final Publicacion publicacion;	
 	
-	public Notificacion(Publicacion p) {
-		this.novedad = p;
+	public Notificacion(Publicacion publicacion, Date fecha) {
+		this.publicacion = publicacion;
+		this.fecha = fecha;
+	}
+	
+	/**
+	 * Constructor de notificaciones que toma unicamente la publicacion
+	 * 
+	 * @param publicacion la publicacion a notificar
+	 */
+	public Notificacion(Publicacion publicacion) {
+		this(publicacion, new Date());
+	}
+	
+	
+	
+	@Override
+	public Integer getId() {
+		return id;
+	}
+	
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Date getFecha() {
@@ -17,14 +39,7 @@ public class Notificacion implements Persistente {
 	}
 	
 	public Publicacion getPublicacion() {
-		return novedad;
-	}
-
-	public int getId() {
-		return id;
+		return publicacion;
 	}
 	
-	public void setId(int id) {
-		this.id = id;
-	}
 }

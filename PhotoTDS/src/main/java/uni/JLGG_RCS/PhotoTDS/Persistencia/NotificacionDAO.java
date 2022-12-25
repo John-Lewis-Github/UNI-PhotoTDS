@@ -9,6 +9,9 @@ public interface NotificacionDAO {
 	 * Introduce una nueva notificacion dentro del servicio de persistencia y le 
 	 * asigna un identificador, de forma que se pueda consultar, modificar o borrar
 	 * 
+	 * No tiene efecto si la notificacion ya habia sido registrada, es decir, es una 
+	 * operacion idempotente
+	 * 
 	 * @param notificacion la notificacion a introducir
 	 */
 	void create(Notificacion notificacion);

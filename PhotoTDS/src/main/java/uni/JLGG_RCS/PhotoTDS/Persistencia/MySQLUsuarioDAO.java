@@ -73,10 +73,16 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		entidad.setNombre(USUARIO);
 		
 		Date fecha = usuario.getFechaNacimiento();
-		String dateString = (fecha == null) ? "" : dformat.format(fecha);
+		String dateString = dformat.format(fecha);
 		
+		// Para obtener el id de la foto de perfil, hay que asegurarse de que no
+		// es nula y luego asegurarse de crearla en la base de datos
 		Foto fotoPerfil = usuario.getFotoPerfil();
-		String fotoPerfilId = (fotoPerfil == null) ? "" : Integer.toString(fotoPerfil.getId());
+		String fotoPerfilId = "";
+		if (fotoPerfil != null) {
+			fotoDAO.create(fotoPerfil);
+			fotoPerfilId = Integer.toString(fotoPerfil.getId());
+		}
 
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(NOMBRE_COMPLETO, usuario.getNombreCompleto()),
@@ -92,20 +98,30 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 		/**
 		 *  Los objetos referenciados mediante listas se representaran
 		 *  a partir de sus identificadores, que se concatenarán para
-		 *  formar un String
+		 *  formar un String. No obstante, habra que asegurarse de que 
+		 *  han sido registrados
 		 */
+		usuario.getSeguidores().stream()
+			.forEach(u -> create(u));
 		String seguidores = Persistente.idList2String(usuario.getSeguidores());
 		listaPropiedades.add(new Propiedad(SEGUIDORES, seguidores));
 		
+		usuario.getFotos().stream()
+			.forEach(f -> fotoDAO.create(f));
 		String fotos = Persistente.idList2String(usuario.getFotos());
 		listaPropiedades.add(new Propiedad(FOTOS, fotos));
 		
+		usuario.getAlbumes().stream()
+			.forEach(a -> albumDAO.create(a));
 		String albumes = Persistente.idList2String(usuario.getAlbumes());
 		listaPropiedades.add(new Propiedad(ALBUMES, albumes));
 		
+		usuario.getNotificaciones().stream()
+			.forEach(n -> notiDAO.create(n));
 		String notificaciones = Persistente.idList2String(usuario.getNotificaciones());
 		listaPropiedades.add(new Propiedad(NOTIFICACIONES, notificaciones));
 		
+		// Finalmente se establece la lista de atributos
 		entidad.setPropiedades(listaPropiedades);
 		
 		return entidad;
@@ -191,12 +207,15 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 	@Override
 	public void create(Usuario usuario) {
 		/**
-		 * Crea directamente una entidad para el nuevo usuario y la registra
-		 * mediante el servicio de persistencia. 
+		 * Solo actua si el identificador es null, y en tal caso
+		 * registra una entidad en la base de datos y establece el
+		 * identificador
 		 */
-		Entidad entidad = UsuarioAEntidad(usuario);
-		entidad = serv.registrarEntidad(entidad);
-		usuario.setId(entidad.getId());
+		if (usuario.getId() == null) {
+			Entidad entidad = UsuarioAEntidad(usuario);
+			entidad = serv.registrarEntidad(entidad);
+			usuario.setId(entidad.getId());
+		}
 	}
 
 	@Override
@@ -237,25 +256,40 @@ public enum MySQLUsuarioDAO implements UsuarioDAO {
 				p.setValor(usuario.getPassword());
 				break;
 			case FOTO_PERFIL:
+				// Hay que asegurarse de guardar los cambios
 				Foto fotoPerfil = usuario.getFotoPerfil();
-				if (fotoPerfil == null)
+				if (fotoPerfil == null) {
 					p.setValor("");
-				else
+				} else {
+					fotoDAO.create(fotoPerfil);
 					p.setValor(Integer.toString(fotoPerfil.getId()));
+				}
 				break;
 			case PREMIUM:
 				p.setValor(Boolean.toString(usuario.isPremium()));
 				break;
 			case SEGUIDORES: 
+				// Hay que asegurarse de almacenar los cambios
+				usuario.getSeguidores().stream()
+					.forEach(u -> create(u));
 				p.setValor(Persistente.idList2String(usuario.getSeguidores()));
 				break;
 			case FOTOS:
+				// Hay que asegurarse de almacenar los cambios
+				usuario.getFotos().stream()
+					.forEach(f -> fotoDAO.create(f));
 				p.setValor(Persistente.idList2String(usuario.getFotos()));
 				break;
 			case ALBUMES:
+				// Hay que asegurarse de almacenar los cambios
+				usuario.getAlbumes().stream()
+					.forEach(a -> albumDAO.create(a));
 				p.setValor(Persistente.idList2String(usuario.getAlbumes()));
 				break;
 			case NOTIFICACIONES:
+				// Hay que asegurarse de almacenar los cambios
+				usuario.getNotificaciones().stream()
+					.forEach(n -> notiDAO.create(n));
 				p.setValor(Persistente.idList2String(usuario.getNotificaciones()));
 				break;
 			default:

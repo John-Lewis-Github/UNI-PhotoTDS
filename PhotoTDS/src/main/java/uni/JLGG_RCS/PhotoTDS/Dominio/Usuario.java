@@ -11,7 +11,8 @@ public class Usuario implements Persistente {
 	
 	private static final int MAX_CARACTERES_PRESENTACION = 200;
 	
-	private int id;
+	private Integer id;
+	
 	private final String nombreCompleto;
 	private final String nombreUsuario;
 	private final Date fechaNacimiento;
@@ -81,12 +82,14 @@ public class Usuario implements Persistente {
 		// Se define directamente el descuento
 		descuento = new DescuentoEdad(this);
 	}
-
-	public int getId() {
+	
+	@Override
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	@Override
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
@@ -168,7 +171,7 @@ public class Usuario implements Persistente {
 			throw new IllegalArgumentException();
 		
 		if (presentacion.length() > MAX_CARACTERES_PRESENTACION)
-			this.presentacion = presentacion.substring(0, MAX_CARACTERES_PRESENTACION+1);
+			this.presentacion = presentacion.substring(0, MAX_CARACTERES_PRESENTACION);
 		else
 			this.presentacion = presentacion;
 	}
@@ -220,19 +223,30 @@ public class Usuario implements Persistente {
 	
 	/**
 	 * Permite incluir un nuevo seguidor a la lista de seguidores
+	 * El nuevo seguidor no puede ser el propio usuario
 	 * 
 	 * @param seguidor el nuevo seguidor
 	 */
 	public void addSeguidor(Usuario seguidor) {
+		if (seguidor == this)
+			throw new IllegalArgumentException();
+		
 		seguidores.add(seguidor);
 	}
 
 	/**
-	 * Permite incluir una lista de nuevos seguidores
+	 * Permite incluir una lista de nuevos seguidores. En esta lista
+	 * no puede estar el propio usuario
 	 * 
 	 * @param seguidores una lista de nuevos seguidores
 	 */
 	public void addSeguidores(Collection<Usuario> seguidores) {
+		boolean ciclo = seguidores.stream()
+				.anyMatch(u -> u == this);
+		
+		if (ciclo)
+			throw new IllegalArgumentException();
+		
 		this.seguidores.addAll(seguidores);
 	}
 
@@ -364,6 +378,5 @@ public class Usuario implements Persistente {
 		for (Usuario s : seguidores)
 			s.addNotificacion(nueva);
 	}
-
 	
 }

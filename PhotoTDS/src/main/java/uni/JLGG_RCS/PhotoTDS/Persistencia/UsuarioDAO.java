@@ -7,7 +7,10 @@ public interface UsuarioDAO {
 	
 	/**
 	 * Introduce un nuevo usuario dentro del servicio de persistencia y le asigna
-	 * un identificador, de forma que se pueda consultar, modificar o borrar
+	 * un identificador, de forma que se pueda consultar, modificar o borrar.
+	 * 
+	 * No tiene efecto si el usuario ya habia sido registrado, es decir, es una 
+	 * operacion idempotente
 	 * 
 	 * @param usuario el usuario a introducir
 	 */

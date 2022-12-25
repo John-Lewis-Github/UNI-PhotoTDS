@@ -48,7 +48,9 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 		Entidad entidad = super.PublicacionAEntidad(album);
 		List<Propiedad> listaPropiedades = entidad.getPropiedades();
 		
-		// Añado la lista de fotos
+		// Añado la lista de fotos, previamente creadas
+		album.getFotos().stream()
+			.forEach(f -> fotoDAO.create(f));
 		listaPropiedades.add(new Propiedad(FOTOS, Persistente.idList2String(album.getFotos())));
 		entidad.setPropiedades(listaPropiedades);
 		
@@ -78,7 +80,9 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 				.findFirst()
 				.orElseThrow();
 		
-		// Se incluye la cadena con identificadores de las fotos
+		// Se incluye la cadena con identificadores de las fotos, previamente creadas
+		album.getFotos().stream()
+			.forEach(f -> fotoDAO.create(f));
 		fotos.setValor(Persistente.idList2String(album.getFotos()));
 		serv.modificarPropiedad(fotos);
 		pool.addObject(album.getId(), album);

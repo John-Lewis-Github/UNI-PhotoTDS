@@ -62,13 +62,25 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		
 		// El nombre de la entidad viene dado por el tipo de T
 		entidad.setNombre(publicacion.getClass().getName());
+		
+		/**
+		 *  Hay que tratar el usuario: por la forma de la clase Publicacion
+		 *  el usuario podria ser nulo. Si no lo es, hay que asegurarse de que
+		 *  pertenezca a la base de datos
+		 */
+		Usuario usuario = publicacion.getUsuario();
+		String usuarioId = "";
+		if (usuario != null) {
+			usDAO.create(usuario);
+			usuarioId = Integer.toString(usuario.getId());
+		}
 
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(TITULO, publicacion.getTitulo()),
 				new Propiedad(FECHA, dformat.format(publicacion.getFecha())),
 				new Propiedad(DESCRIPCION, publicacion.getDescripcion()),
 				new Propiedad(ME_GUSTA, Integer.toString(publicacion.getMeGusta())),
-				new Propiedad(USUARIO, Integer.toString(publicacion.getUsuario().getId()))
+				new Propiedad(USUARIO, usuarioId)
 				));
 		
 		/**
@@ -80,8 +92,11 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		/**
 		 *  Los comentarios, referenciados mediante listas, se representaran
 		 *  a partir de sus identificadores, que se concatenarán para
-		 *  formar un String
+		 *  formar un String. Tambien hay que asegurarse de que se hayan creado en la
+		 *  base de datos
 		 */
+		publicacion.getComentarios().stream()
+			.forEach(c -> comDAO.create(c));
 		String comentarios = Persistente.idList2String(publicacion.getComentarios());
 		listaPropiedades.add(new Propiedad(COMENTARIOS, comentarios));
 		
@@ -145,7 +160,10 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		
 		// Se recupera el usuario a traves del DAO de usuarios
 		String usuarioId = serv.recuperarPropiedadEntidad(entidad, USUARIO);
-		Usuario usuario = usDAO.get(Integer.parseInt(usuarioId));
+		Usuario usuario = null;
+		if (usuarioId != "")
+			usuario = usDAO.get(Integer.parseInt(usuarioId));
+		
 		publicacion.setUsuario(usuario);
 		
 		return publicacion;
@@ -154,12 +172,15 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 	@Override
 	public void create(T publicacion) {
 		/**
-		 * Crea directamente una entidad para la nueva publicacion y la registra
-		 * mediante el servicio de persistencia. 
+		 * Solo actua si el identificador es null, y en tal caso
+		 * registra una entidad en la base de datos y establece el
+		 * identificador
 		 */
-		Entidad entidad = PublicacionAEntidad(publicacion);
-		entidad = serv.registrarEntidad(entidad);
-		publicacion.setId(entidad.getId());
+		if (publicacion.getId() == null) {
+			Entidad entidad = PublicacionAEntidad(publicacion);
+			entidad = serv.registrarEntidad(entidad);
+			publicacion.setId(entidad.getId());
+		}
 	}
 
 	@Override
@@ -197,8 +218,14 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 				p.setValor(Persistente.idList2String(publicacion.getComentarios()));
 				break;
 			case USUARIO:
+				// Hay que asegurarse de guardar los cambios
 				Usuario usuario = publicacion.getUsuario();
-				p.setValor(Integer.toString(usuario.getId()));
+				if (usuario == null) {
+					p.setValor("");
+				} else {
+					usDAO.create(usuario);
+					p.setValor(Integer.toString(usuario.getId()));
+				}
 				break;
 			default:
 				break;

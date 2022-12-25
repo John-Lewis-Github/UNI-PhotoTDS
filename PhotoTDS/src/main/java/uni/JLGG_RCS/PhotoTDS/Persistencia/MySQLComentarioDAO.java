@@ -19,8 +19,8 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 public enum MySQLComentarioDAO implements ComentarioDAO {
 	INSTANCE;
 	
-	private static final String COMENTARIO = Comentario.class.getName()
-			;
+	private static final String COMENTARIO = Comentario.class.getName();
+	
 	private static final String TEXTO = "texto";
 	private static final String FECHA = "fecha";
 	private static final String COMENTADOR = "comentador";
@@ -51,10 +51,22 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		Entidad entidad = new Entidad();
 		entidad.setNombre(COMENTARIO);
 		
+		/**
+		 *  Hay que tratar el usuario: por la forma de la clase Comentario
+		 *  el usuario podria ser nulo. Si no lo es, hay que asegurarse de que
+		 *  pertenezca a la base de datos
+		 */
+		Usuario usuario = comentario.getComentador();
+		String usuarioId = "";
+		if (usuario != null) {
+			usDAO.create(usuario);
+			usuarioId = Integer.toString(usuario.getId());
+		}
+		
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(TEXTO, comentario.getTexto()),
 				new Propiedad(FECHA, dformat.format(comentario.getFecha())),
-				new Propiedad(COMENTADOR, Integer.toString(comentario.getComentador().getId()))
+				new Propiedad(COMENTADOR, usuarioId)
 				));
 		
 		entidad.setPropiedades(listaPropiedades);
@@ -90,7 +102,9 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		
 		// Se puede recuperar el usuario comentador sin problemas
 		String comentadorId = serv.recuperarPropiedadEntidad(entidad, COMENTADOR);
-		Usuario comentador = (Usuario) usDAO.get(Integer.parseInt(comentadorId));
+		Usuario comentador = null;
+		if (comentadorId != "")
+			comentador = (Usuario) usDAO.get(Integer.parseInt(comentadorId));
 
 		comentario.setComentador(comentador);
 		
@@ -100,13 +114,15 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 	@Override
 	public void create(Comentario comentario) {
 		/**
-		 * Crea directamente una entidad para el nuevo comentario y la registra
-		 * mediante el servicio de persistencia. 
+		 * Solo actua si el identificador es null, y en tal caso
+		 * registra una entidad en la base de datos y establece el
+		 * identificador
 		 */
-		Entidad entidad = ComentarioAEntidad(comentario);
-		entidad = serv.registrarEntidad(entidad);
-		comentario.setId(entidad.getId());
-		
+		if (comentario.getId() == null) {
+			Entidad entidad = ComentarioAEntidad(comentario);
+			entidad = serv.registrarEntidad(entidad);
+			comentario.setId(entidad.getId());
+		}
 	}
 
 	@Override
@@ -136,7 +152,12 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 				break;
 			case COMENTADOR:
 				Usuario comentador = comentario.getComentador();
-				p.setValor(Integer.toString(comentador.getId()));
+				if (comentador == null) {
+					p.setValor("");
+				} else {
+					usDAO.create(comentador);
+					p.setValor(Integer.toString(comentador.getId()));
+				}
 				break;
 			default:
 				break;

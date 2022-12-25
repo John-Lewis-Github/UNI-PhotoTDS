@@ -48,6 +48,8 @@ public class UsuarioTest {
 		u.setPresentacion(presentacionLarga);
 		
 		if (u.getPresentacion().length() > 200) {
+			System.out.print(u.getPresentacion());
+			System.out.print(u.getPresentacion().length());
 			fail("La presentacion debería tener 200 caracteres o menos");
 		}
 	}
@@ -103,7 +105,18 @@ public class UsuarioTest {
 			System.out.println(l.size());
 			fail("La lista debería tener cuatro elementos");
 		}
+	}
+	
+	@Test
+	public void testPersistente() {
+		u.setId((Integer) null);
+		System.out.println(u.getId());
 		
+		u.setId(12);
+		System.out.println(u.getId());
 		
+		Integer i = 14;
+		u.setId(i);
+		System.out.println(u.getId());
 	}
 }

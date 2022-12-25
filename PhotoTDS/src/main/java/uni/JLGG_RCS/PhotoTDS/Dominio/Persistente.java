@@ -6,8 +6,21 @@ import java.util.List;
 
 public interface Persistente {
 	
-	public int getId();
-	public void setId(int id);
+	/**
+	 * Obtiene el identificador de un objeto persistente.
+	 * El identificador debe ser null por defecto, y modificarse 
+	 * con el metodo setId()
+	 * 
+	 * @return el identificador de un objeto persistente
+	 */
+	public Integer getId();
+	
+	/**
+	 * Modifica el identificador de un objeto persistente. 
+	 * 
+	 * @param id el nuevo identificador del objeto persistente
+	 */
+	public void setId(Integer id);
 	
 	/**
 	 * Construye una cadena con los identificadores de una lista de 

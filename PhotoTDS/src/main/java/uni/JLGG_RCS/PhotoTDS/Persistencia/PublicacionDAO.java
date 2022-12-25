@@ -9,6 +9,9 @@ public interface PublicacionDAO<T extends Publicacion> {
 	 * Introduce una nueva publicacion dentro del servicio de persistencia y le 
 	 * asigna un identificador, de forma que se pueda consultar, modificar o borrar
 	 * 
+	 * No tiene efecto si la publicacion ya habia sido registrada, es decir, es una 
+	 * operacion idempotente
+	 * 
 	 * @param publicacion la publicacion a introducir
 	 */
 	void create (T publicacion);
