@@ -33,6 +33,7 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 	private MySQLAlbumDAO() {
 		super();
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
+		fotoDAO = MySQLFotoDAO.getInstance();
 		pool = DAOPool.INSTANCE;
 	}
 		
@@ -43,23 +44,11 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 		return new Album(titulo, descripcion);
 	}
 	
-	@Override
-	protected Entidad PublicacionAEntidad(Album album) {
-		Entidad entidad = super.PublicacionAEntidad(album);
-		List<Propiedad> listaPropiedades = entidad.getPropiedades();
-		
-		// Añado la lista de fotos, previamente creadas
-		album.getFotos().stream()
-			.forEach(f -> fotoDAO.create(f));
-		listaPropiedades.add(new Propiedad(FOTOS, Persistente.idList2String(album.getFotos())));
-		entidad.setPropiedades(listaPropiedades);
-		
-		return entidad;
-	}
-	
 	@Override 
 	protected Album EntidadAPublicacion(Entidad entidad) {
 		Album album = super.EntidadAPublicacion(entidad);
+		if (album == null)
+			return null;
 		
 		// Se obtienen los Ids de las fotos del album y se recuperan
 		List<Integer> fotosIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, FOTOS));
@@ -69,6 +58,23 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 		
 		album.setFotos(fotos);
 		return album;
+	}
+	
+	@Override
+	public void create(Album publicacion) {
+		super.create(publicacion);
+		
+		Entidad entidad = serv.recuperarEntidad(publicacion.getId());
+		List<Propiedad> listaPropiedades = entidad.getPropiedades();
+		
+		// Incluyo las referencias a la lista de fotos
+		publicacion.getFotos().stream()
+			.forEach(f -> fotoDAO.create(f));
+		String fotos = Persistente.idList2String(publicacion.getFotos());
+		listaPropiedades.add(new Propiedad(FOTOS, fotos));
+		
+		entidad.setPropiedades(listaPropiedades);	
+		serv.modificarEntidad(entidad);
 	}
 	
 	@Override

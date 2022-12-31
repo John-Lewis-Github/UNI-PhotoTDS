@@ -1,6 +1,7 @@
 package uni.JLGG_RCS.PhotoTDS.Persistencia;
 
 import java.text.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import beans.Propiedad;
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Comentario;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 
 public enum MySQLComentarioDAO implements ComentarioDAO {
@@ -26,19 +26,27 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 	private static final String COMENTADOR = "comentador";
 	
 	private ServicioPersistencia serv;
-	private UsuarioDAO usDAO;
+	private FactoriaDAO fact;
 	private DAOPool pool;
 	private DateFormat dformat;
 	
 	private MySQLComentarioDAO() {
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
-		usDAO = MySQLUsuarioDAO.INSTANCE;
+		try {
+			fact = FactoriaDAO.getInstancia();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		pool = DAOPool.INSTANCE;
 		dformat = new SimpleDateFormat("dd/MM/yyyy");
 	}
 	
 	/**
-	 * Crea una nueva entidad a partir de un comentario
+	 * Crea una nueva entidad a partir de un comentario. La entidad
+	 * NO ALMACENA datos referentes a instancias de otros objetos
+	 * persistentes. Esto debera tratarse debidamente.
+	 * 
 	 * @param cometario el comentario a partir del que formar una entidad
 	 * @return Una entidad creada a partir del comentario
 	 */
@@ -50,23 +58,10 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		
 		Entidad entidad = new Entidad();
 		entidad.setNombre(COMENTARIO);
-		
-		/**
-		 *  Hay que tratar el usuario: por la forma de la clase Comentario
-		 *  el usuario podria ser nulo. Si no lo es, hay que asegurarse de que
-		 *  pertenezca a la base de datos
-		 */
-		Usuario usuario = comentario.getComentador();
-		String usuarioId = "";
-		if (usuario != null) {
-			usDAO.create(usuario);
-			usuarioId = Integer.toString(usuario.getId());
-		}
-		
+
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(TEXTO, comentario.getTexto()),
-				new Propiedad(FECHA, dformat.format(comentario.getFecha())),
-				new Propiedad(COMENTADOR, usuarioId)
+				new Propiedad(FECHA, dformat.format(comentario.getFecha()))
 				));
 		
 		entidad.setPropiedades(listaPropiedades);
@@ -104,7 +99,7 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		String comentadorId = serv.recuperarPropiedadEntidad(entidad, COMENTADOR);
 		Usuario comentador = null;
 		if (comentadorId != "")
-			comentador = (Usuario) usDAO.get(Integer.parseInt(comentadorId));
+			comentador = fact.getUsuarioDAO().get(Integer.parseInt(comentadorId));
 
 		comentario.setComentador(comentador);
 		
@@ -118,11 +113,32 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 		 * registra una entidad en la base de datos y establece el
 		 * identificador
 		 */
-		if (comentario.getId() == null) {
-			Entidad entidad = ComentarioAEntidad(comentario);
-			entidad = serv.registrarEntidad(entidad);
-			comentario.setId(entidad.getId());
+		if (comentario.getId() != null)
+			return;
+		
+		// Creo una entidad para el comentario
+		Entidad entidad = ComentarioAEntidad(comentario);
+		
+		// La registro y obtengo un identificador
+		entidad = serv.registrarEntidad(entidad);
+		comentario.setId(entidad.getId());
+		
+		// Obtengo la lista de propiedades
+		List<Propiedad> listaPropiedades = entidad.getPropiedades();
+		
+		// Trato la referencia al usuario, persistente
+		Usuario usuario = comentario.getComentador();
+		String usuarioId = "";
+		if (usuario != null) {
+			fact.getUsuarioDAO().create(usuario);
+			usuarioId = Integer.toString(usuario.getId());
+			listaPropiedades.add(new Propiedad(COMENTADOR, usuarioId));
+		} else {
+			listaPropiedades.add(new Propiedad(COMENTADOR, ""));
 		}
+		
+		entidad.setPropiedades(listaPropiedades);
+		serv.modificarEntidad(entidad);
 	}
 
 	@Override
@@ -155,7 +171,7 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 				if (comentador == null) {
 					p.setValor("");
 				} else {
-					usDAO.create(comentador);
+					fact.getUsuarioDAO().create(comentador);
 					p.setValor(Integer.toString(comentador.getId()));
 				}
 				break;

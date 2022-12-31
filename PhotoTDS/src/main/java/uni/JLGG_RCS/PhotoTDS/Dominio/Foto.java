@@ -22,11 +22,7 @@ public class Foto extends Publicacion {
 	public Foto(String titulo, String descripcion, String path) {
 		super(titulo, descripcion);
 		this.path = path;
-		try {
-			this.imagen = ImageIO.read(new File(path));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.imagen = null;
 	}
 	
 	public String getPath() {
@@ -35,14 +31,17 @@ public class Foto extends Publicacion {
 	
 	public void setPath(String path) {
 		this.path = path;
-		try {
-			this.imagen = ImageIO.read(new File(path));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public BufferedImage getImagen () {
+		// Se retrasa la creacion de la imagen hasta el ultimo momento
+		if (imagen == null)
+			try {
+				this.imagen = ImageIO.read(new File(path));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
 		return imagen;
 	}
 

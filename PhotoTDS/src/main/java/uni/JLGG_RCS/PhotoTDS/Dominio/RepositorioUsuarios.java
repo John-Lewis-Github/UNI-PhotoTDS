@@ -25,9 +25,24 @@ public enum RepositorioUsuarios {
 		usuarios = usDAO.getAll();
 	}
 	
-	public void addUsuario(Usuario usuario) {
-		usuarios.add(usuario);
-		usDAO.create(usuario);
+	/**
+	 * Incluye a un usuario en el repositorio de usuarios, y lo
+	 * guarda como objeto persistente. Para ello es necesario que
+	 * no exista un usuario igual (con el mismo nombre) en la base de datos.
+	 * 
+	 * @param usuario el usuario a crear
+	 * @return true si se ha podido crear el usuario, false si no
+	 */
+	public boolean addUsuario(Usuario usuario) {
+		boolean existente = usuarios.stream()
+				.anyMatch(u -> u.equals(usuario));
+		
+		if (!existente) {
+			usuarios.add(usuario);
+			usDAO.create(usuario);
+		}
+		
+		return !existente;
 	}
 	
 	/**
@@ -55,5 +70,21 @@ public enum RepositorioUsuarios {
 		listaUsuarios.addAll(porEmail);
 		
 		return listaUsuarios;
+	}
+	
+	/**
+	 * Recupera un usuario a partir de su nombre de usuario y su password
+	 * 
+	 * @param nombreUsuario el nombre de usuario del usuario
+	 * @param password el password del usuario
+	 * @return el usuario que con tales atributos, o null si no se encuentra
+	 */
+	public Usuario recuperarUsuario(String nombreUsuario, String password) {
+		// Filtra por nombre y password
+		return usuarios.stream()
+				.filter(u -> u.getNombreUsuario().equals(nombreUsuario))
+				.filter(u -> u.getPassword().equals(password))
+				.findAny()
+				.orElse(null);
 	}
 }

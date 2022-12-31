@@ -51,7 +51,8 @@ public class FotoTest {
 	@Test
 	public void testUsoIcono() {
 		JLabel label = new JLabel();
-		label.setIcon(new ImageIcon(f.getImagen()));
+		label.setIcon(new ImageIcon(f.getImagen().getScaledInstance(200, 150, 0)));
+		label.setSize(new Dimension(200,200));
 		
 		JFrame frame = new JFrame();
 		frame.setSize(new Dimension(200, 200));
@@ -60,5 +61,13 @@ public class FotoTest {
 		JPanel panel = new JPanel();
 		frame.setContentPane(panel);
 		panel.add(label);
+		
+		frame.setVisible(true);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

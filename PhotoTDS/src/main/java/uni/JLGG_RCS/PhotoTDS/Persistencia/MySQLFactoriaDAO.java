@@ -9,7 +9,7 @@ public class MySQLFactoriaDAO extends FactoriaDAO{
 	
 	@Override
 	public UsuarioDAO getUsuarioDAO() {
-		return MySQLUsuarioDAO.INSTANCE;
+		return MySQLUsuarioDAO.getInstance();
 	}
 	
 	@Override

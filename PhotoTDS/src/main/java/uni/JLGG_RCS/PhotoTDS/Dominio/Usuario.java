@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Usuario implements Persistente {
 	
@@ -378,5 +379,29 @@ public class Usuario implements Persistente {
 		for (Usuario s : seguidores)
 			s.addNotificacion(nueva);
 	}
+
+	/**
+	 * Usa el nombre de usuario para establecer igualdad
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(nombreUsuario);
+	}
+
+	/**
+	 * Devuelve true si los dos usuarios tienen el mismo nombre de usuario
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Usuario other = (Usuario) obj;
+		return Objects.equals(nombreUsuario, other.nombreUsuario);
+	}
+	
 	
 }
