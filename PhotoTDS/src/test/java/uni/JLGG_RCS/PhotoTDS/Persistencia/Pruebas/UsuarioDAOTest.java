@@ -87,7 +87,7 @@ public class UsuarioDAOTest {
 		
 		if (u2.getFotoPerfil() == null)
 			fail("No se ha guardado bien la foto de perfil");
-		
+				
 		String newPassword = "bbbb";
 		u.setPassword(newPassword);
 		u.setPremium(false);

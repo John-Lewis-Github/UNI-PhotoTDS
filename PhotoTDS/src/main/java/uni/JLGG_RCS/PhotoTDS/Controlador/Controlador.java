@@ -1,8 +1,10 @@
-package Controlador;
+package uni.JLGG_RCS.PhotoTDS.Controlador;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import uni.JLGG_RCS.PhotoTDS.Dominio.GeneradorExcel;
+import uni.JLGG_RCS.PhotoTDS.Dominio.GeneradorPDF;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 import uni.JLGG_RCS.PhotoTDS.Dominio.RepositorioHashtags;
@@ -17,10 +19,18 @@ public enum Controlador {
 	private RepositorioPublicaciones pubRepo;
 	private RepositorioHashtags hashRepo;
 	
+	private GeneradorExcel genExcel;
+	private GeneradorPDF genPDF;
+	
+	private Usuario usuario;
+	
 	private Controlador() {
 		usRepo = RepositorioUsuarios.INSTANCE;
 		pubRepo = RepositorioPublicaciones.INSTANCE;
 		hashRepo = RepositorioHashtags.INSTANCE;
+		
+		genExcel = GeneradorExcel.INSTANCE;
+		genPDF = GeneradorPDF.INSTANCE;
 	}
 	
 	/**
@@ -30,6 +40,7 @@ public enum Controlador {
 	 * @return true si se ha podido registrar al usuario, false si no
 	 */
 	public boolean registrarUsuario(Usuario usuario) {
+		
 		return usRepo.addUsuario(usuario);
 	}
 	
@@ -44,7 +55,7 @@ public enum Controlador {
 	 * @return el usuario con tales atributos, o null si no se encuentra
 	 */
 	public Usuario recuperarUsuario(String nombreUsuario, String password) {
-		return usRepo.recuperarUsuario(nombreUsuario, password);
+		return usuario = usRepo.recuperarUsuario(nombreUsuario, password);
 	}
 	
 	/**
@@ -78,6 +89,16 @@ public enum Controlador {
 		
 		Hashtag h = hashRepo.getHashtag(cadenaHashtag);
 		return pubRepo.findPublicaciones(h);
+	}
+	
+	public void generarExcel(Usuario u) {
+		if (u.isPremium())
+			genExcel.generarExcel(u);
+	}
+	
+	public void generarPDF(Usuario u) {
+		if (u.isPremium())
+			genPDF.generarPDF(u);
 	}
 	
 }
