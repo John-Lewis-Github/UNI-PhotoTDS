@@ -70,11 +70,10 @@ public class VentanaLogin {
 	 */
 	public VentanaLogin() {
 		initialize();
-		panelPrincipal = crearPanel(0);
+		panelPrincipal = crearPanelPrincipal();
+		panelCrearCuenta = crearPanelCrearCuenta();
 		addTitulo(panelPrincipal);
 		//addCamposTexto(panelPrincipal);
-		panelCrearCuenta = crearPanel(1);
-		addCrearCuenta(panelCrearCuenta);
 	}
 
 	/**
@@ -114,67 +113,35 @@ public class VentanaLogin {
 	 * central con un BoxLayout que organice los elementos verticalmente. Para añadir
 	 * márgenes, se coloca este panel dentro de un contenedor que los posea.
 	 */
-	private JPanel crearPanel(int tipo) {
+	private JPanel crearPanelPrincipal() {
 		JPanel panel = new JPanel();
-		if(tipo==0) {
-			panel.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, ALTOPANELPRINCIPAL));
-			frame.getContentPane().add(panel,  BorderLayout.NORTH);
-		}
-		else {
-			frame.getContentPane().add(panel, BorderLayout.SOUTH);
-			panel.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, ALTOPANELCREARCUENTA));
-		}
-			
+		panel.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, ALTOPANELPRINCIPAL));
+		frame.getContentPane().add(panel,  BorderLayout.NORTH);	
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		
-		//JPanel panel = new JPanel();
-		
-		//frame.getContentPane().add(panel, BorderLayout.SOUTH);
-		//panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-
-		//contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
-
-		//contenedor.add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
-		//frame.getContentPane().add(Box.createHorizontalStrut(MARGEN_HORIZONTAL));
-		return panel;
-	}
-	
-	private void addTitulo(JPanel panel) {
-		// Panel del título
-		//panelTitulo = new JPanel();
-		//contenedor.add(panelTitulo, BorderLayout.SOUTH);
+		// Panel del titulo
 		
 		JLabel lblPhototds = new JLabel("PhotoTDS", JLabel.CENTER);
-		//lblPhototds.setHorizontalTextPosition(SwingConstants.CENTER);
-		//lblPhototds.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPhototds.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, 50));
-		lblPhototds.setMinimumSize(new Dimension(ANCHOPANELPRINCIPAL, 50));
-		lblPhototds.setMaximumSize(new Dimension(ANCHOPANELPRINCIPAL, 50));
+		fixSize(lblPhototds, ANCHOPANELPRINCIPAL, 50);
 		lblPhototds.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 30));
 		lblPhototds.setAlignmentX(Component.CENTER_ALIGNMENT);
-		//panelTitulo.setMaximumSize(new Dimension(450,30));
 		panel.add(lblPhototds);
-		
+				
 		panelTexto = new JPanel();
 		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
-		Dimension dimensionPanelTexto = new Dimension(400, 50);
-		panelTexto.setPreferredSize(dimensionPanelTexto);
-		panelTexto.setMaximumSize(dimensionPanelTexto);
-		panelTexto.setMinimumSize(dimensionPanelTexto);
+		fixSize(panelTexto, 400, 50);
 		panelTexto.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textField = new JTextField();
 		textField.setText("nombre de usuario o email");
 		textField.setColumns(30);
-		//textField.setFont(new Font("Arial", Font.PLAIN, 10));
 		panelTexto.add(textField);
-		
-		
+				
 		passwordField = new JPasswordField();
 		passwordField.setText("password");
 		passwordField.setColumns(30);
 		panelTexto.add(passwordField);
 		panel.add(panelTexto);
-		
+				
 		JButton btnNewButton = new JButton("Iniciar Sesión");
 		btnNewButton.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
 		btnNewButton.setMinimumSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
@@ -182,41 +149,22 @@ public class VentanaLogin {
 		btnNewButton.setBackground(new Color(30, 144, 255));
 		btnNewButton.setForeground(Color.WHITE);
 		btnNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(btnNewButton);
+		panel.add(btnNewButton);		
+		
+		return panel;
 	}
 	
-	/*private void addCamposTexto(JPanel panelPrincipal) {
-		panelTexto = new JPanel();
-		panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
-		// Truco para fijar solo la altura máxima
-		panelTexto.setMaximumSize(new Dimension(4000, 100));
-		panelPrincipal.add(panelTexto);
-
-		// Cada campo de texto se incluye en el panel de texto
-		txtEmail = new JTextField();
-		txtEmail.setText("Email");
-		panelTexto.add(txtEmail);
-		txtEmail.setColumns(30);
+	private void addTitulo(JPanel panel) {
 		
-		/*txtNombreCompleto = new JTextField();
-		txtNombreCompleto.setText("Nombre completo");
-		panelTexto.add(txtNombreCompleto);
-		txtNombreCompleto.setColumns(30);*/
-		
-		/*txtNombreDeUsuario = new JTextField();
-		txtNombreDeUsuario.setText("Nombre de usuario");
-		panelTexto.add(txtNombreDeUsuario);
-		txtNombreDeUsuario.setColumns(30);
-		
-		pwdPassword = new JPasswordField();
-		pwdPassword.setColumns(30);
-		pwdPassword.setText("Password");
-		panelTexto.add(pwdPassword);
-	} */
-
+	}
 	
 	
-	private void addCrearCuenta(JPanel panel) {
+	private JPanel crearPanelCrearCuenta() {
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel, BorderLayout.SOUTH);
+		panel.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, ALTOPANELCREARCUENTA));
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		
 		JLabel lblnoTienesUna = new JLabel("¿No tienes una cuenta?", JLabel.CENTER);
 		fixSize(lblnoTienesUna,ANCHOPANELPRINCIPAL,30);
 		//lblnoTienesUna.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -228,9 +176,8 @@ public class VentanaLogin {
 		btnCrearCuenta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 	            VentanaRegistro registrarse = new VentanaRegistro();
-	            registrarse.getframePrincipal().setLocation(frame.getLocationOnScreen());
-	            frame.setVisible(false);
-	            registrarse.getframePrincipal().setVisible(true);
+	            registrarse.setLocationRelativeTo(btnCrearCuenta);
+	            registrarse.setVisible(true);
 			}
 		});
 		fixSize(btnCrearCuenta, ANCHOPANELPRINCIPAL, 40);
@@ -240,6 +187,8 @@ public class VentanaLogin {
 		//contenedor.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panel.add(lblnoTienesUna);
 		panel.add(btnCrearCuenta);
+		
+		return panel;
 	}
 	
 	private void fixSize(JComponent comp, int x, int y) {
