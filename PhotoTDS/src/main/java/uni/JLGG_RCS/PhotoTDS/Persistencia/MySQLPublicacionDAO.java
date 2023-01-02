@@ -1,6 +1,7 @@
 package uni.JLGG_RCS.PhotoTDS.Persistencia;
 
 import java.text.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,43 +13,42 @@ import beans.Entidad;
 import beans.Propiedad;
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Comentario;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Notificacion;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Persistente;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 
 public abstract class MySQLPublicacionDAO<T extends Publicacion> implements PublicacionDAO<T> {
-	
-	private static final String PUBLICACION = "Publicacion";
-	
+		
 	private static final String TITULO = "titulo";
 	private static final String FECHA = "fecha";
 	private static final String DESCRIPCION = "descripcion";
 	private static final String ME_GUSTA = "megusta";
-	private static final String HASHTAGS = "hashtags";
 	private static final String COMENTARIOS = "comentarios";
 	private static final String USUARIO = "publicacion";
 
-	private ServicioPersistencia serv;
-	private UsuarioDAO usDAO;
-	private ComentarioDAO comDAO;
-	private DAOPool pool;
-	private DateFormat dformat;
+	private static ServicioPersistencia serv;
+	private static FactoriaDAO fact;
+	private static DAOPool pool;
+	private static DateFormat dformat;
 	
 	protected MySQLPublicacionDAO() {
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
-		usDAO = MySQLUsuarioDAO.INSTANCE;
-		comDAO = MySQLComentarioDAO.INSTANCE;
+		try {
+			fact = MySQLFactoriaDAO.getInstancia();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		pool = DAOPool.INSTANCE;
 		dformat = new SimpleDateFormat("dd/MM/yyyy");
 	}
 	
 	/**
-	 * Crea una nueva entidad a partir de una publicacion
+	 * Crea una nueva entidad a partir de una publicacion. La entidad
+	 * NO ALMACENA datos referentes a instancias de otros objetos
+	 * persistentes. Esto debera tratarse debidamente.
+	 * 
 	 * @param publicacion la publicacion a partir de la que formar una entidad
 	 * @return Una entidad creada a partir de la publicacion
 	 */
@@ -63,42 +63,14 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		// El nombre de la entidad viene dado por el tipo de T
 		entidad.setNombre(publicacion.getClass().getName());
 		
-		/**
-		 *  Hay que tratar el usuario: por la forma de la clase Publicacion
-		 *  el usuario podria ser nulo. Si no lo es, hay que asegurarse de que
-		 *  pertenezca a la base de datos
-		 */
-		Usuario usuario = publicacion.getUsuario();
-		String usuarioId = "";
-		if (usuario != null) {
-			usDAO.create(usuario);
-			usuarioId = Integer.toString(usuario.getId());
-		}
-
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
 				new Propiedad(TITULO, publicacion.getTitulo()),
 				new Propiedad(FECHA, dformat.format(publicacion.getFecha())),
 				new Propiedad(DESCRIPCION, publicacion.getDescripcion()),
-				new Propiedad(ME_GUSTA, Integer.toString(publicacion.getMeGusta())),
-				new Propiedad(USUARIO, usuarioId)
+				new Propiedad(ME_GUSTA, Integer.toString(publicacion.getMeGusta()))
 				));
 		
-		/**
-		 *  No será necesario guardar los hashtags, pues aparecen en el texto
-		 *  de la descripcion. Cuando se cree una instancia de Publicacion, junto
-		 *  con la descripcion se procesaran los hashtags.
-		 */
-		
-		/**
-		 *  Los comentarios, referenciados mediante listas, se representaran
-		 *  a partir de sus identificadores, que se concatenarán para
-		 *  formar un String. Tambien hay que asegurarse de que se hayan creado en la
-		 *  base de datos
-		 */
-		publicacion.getComentarios().stream()
-			.forEach(c -> comDAO.create(c));
-		String comentarios = Persistente.idList2String(publicacion.getComentarios());
-		listaPropiedades.add(new Propiedad(COMENTARIOS, comentarios));
+
 		
 		entidad.setPropiedades(listaPropiedades);
 		
@@ -154,7 +126,7 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		// Se transforman las listas de identificadores enteros a listas de atributos
 		List<Integer> comentariosIds = Persistente.string2IdList(serv.recuperarPropiedadEntidad(entidad, COMENTARIOS));
 		List<Comentario> comentarios = comentariosIds.stream()
-				.map(id -> comDAO.get(id))
+				.map(id -> fact.getComentarioDAO().get(id))
 				.toList();
 		publicacion.addComentarios(comentarios);
 		
@@ -162,7 +134,7 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		String usuarioId = serv.recuperarPropiedadEntidad(entidad, USUARIO);
 		Usuario usuario = null;
 		if (usuarioId != "")
-			usuario = usDAO.get(Integer.parseInt(usuarioId));
+			usuario = fact.getUsuarioDAO().get(Integer.parseInt(usuarioId));
 		
 		publicacion.setUsuario(usuario);
 		
@@ -176,21 +148,56 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		 * registra una entidad en la base de datos y establece el
 		 * identificador
 		 */
-		if (publicacion.getId() == null) {
-			Entidad entidad = PublicacionAEntidad(publicacion);
-			entidad = serv.registrarEntidad(entidad);
-			publicacion.setId(entidad.getId());
+		if (publicacion.getId() != null)
+			return;
+		
+		// Primero me aseguro de no volver a entrar en la funcion
+		publicacion.setId(-1);
+		
+		// Creo una entidad para la publicacion
+		Entidad entidad = PublicacionAEntidad(publicacion);
+		
+		// La registro y obtengo un identificador real
+		entidad = serv.registrarEntidad(entidad);
+		publicacion.setId(entidad.getId());
+		
+		// Incluyo en la lista los objetos persistentes referenciados
+		List<Propiedad> listaPropiedades = entidad.getPropiedades();
+		
+		// Usuario
+		Usuario usuario = publicacion.getUsuario();
+		if (usuario != null) {
+			fact.getUsuarioDAO().create(usuario);
+			String usuarioId = Integer.toString(usuario.getId());
+			listaPropiedades.add(new Propiedad(USUARIO, usuarioId));
+		} else {
+			listaPropiedades.add(new Propiedad(USUARIO, ""));
 		}
+		
+		// Comentarios
+		publicacion.getComentarios().stream()
+			.forEach(c -> fact.getComentarioDAO().create(c));
+		String comentarios = Persistente.idList2String(publicacion.getComentarios());
+		listaPropiedades.add(new Propiedad(COMENTARIOS, comentarios));
+		
+		entidad.setPropiedades(listaPropiedades);
+		serv.modificarEntidad(entidad);
 	}
+	
 
 	@Override
 	public boolean delete(T publicacion) {
 		/**
 		 * Borra la entidad que tenga el mismo id que la publicacion
 		 * Por tanto, la operacion puede no borrar ninguna entidad
+		 * En particular esto ocurre si el id es null
 		 */
+		if (publicacion.getId() == null)
+			return false;
+		
 		Entidad entidad = serv.recuperarEntidad(publicacion.getId());
 		pool.removeObject(publicacion.getId());
+		publicacion.setId(null);
 		return serv.borrarEntidad(entidad);
 	}
 
@@ -223,7 +230,7 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 				if (usuario == null) {
 					p.setValor("");
 				} else {
-					usDAO.create(usuario);
+					fact.getUsuarioDAO().create(usuario);
 					p.setValor(Integer.toString(usuario.getId()));
 				}
 				break;
@@ -245,7 +252,8 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		 * en el Pool. Si no está, entonces se crea la instancia en cuestion.
 		 */
 		T publicacion = (T) pool.getObject(id);
-		if (publicacion == null)
+		
+		if (publicacion == null) 
 			publicacion = EntidadAPublicacion(serv.recuperarEntidad(id));
 		
 		return publicacion;

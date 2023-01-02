@@ -54,6 +54,9 @@ public class MySQLFotoDAO extends MySQLPublicacionDAO<Foto>{
 	
 	@Override 
 	protected Foto EntidadAPublicacion(Entidad entidad) {
+		if (entidad == null)
+			return null;
+		
 		Foto foto = super.EntidadAPublicacion(entidad);
 		String path = serv.recuperarPropiedadEntidad(entidad, PATH);
 		

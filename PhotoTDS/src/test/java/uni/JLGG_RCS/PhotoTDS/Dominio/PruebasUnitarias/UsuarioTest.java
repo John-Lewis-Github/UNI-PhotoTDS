@@ -9,13 +9,84 @@ import java.util.List;
 
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 
 public class UsuarioTest {
 
-	private Usuario u = new Usuario("Pepe Simon", "pepito32", Date.from(Instant.now()), "pepe@gmail.com", "contra");
+	private Usuario u = new Usuario("Pepe Simon", "pepito32", new Date(), "pepe@gmail.com", "contra");
 
+	@Test 
+	public void testConstructor() {
+		Usuario prueba = null;
+		
+		// Comprobamos que el constructor no admite nulls en los parametros
+		// Ni cadenas vacias
+		
+		// Nombre completo
+		try {
+			prueba = new Usuario(null, "prueba23", new Date(), "prueba@prueba.com", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		try {
+			prueba = new Usuario("", "prueba23", new Date(), "prueba@prueba.com", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		
+		// Nombre de usuario
+		try {
+			prueba = new Usuario("Prueba", null, new Date(), "prueba@prueba.com", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		try {
+			prueba = new Usuario("Prueba", "", new Date(), "prueba@prueba.com", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		
+		// Fecha
+		try {
+			prueba = new Usuario("Prueba", "prueba23", null, "prueba@prueba.com", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		
+		// Email
+		try {
+			prueba = new Usuario("Prueba", "prueba23", new Date(), null, "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		try {
+			prueba = new Usuario("Prueba", "prueba23", new Date(), "", "asdf");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		
+		// Password
+		try {
+			prueba = new Usuario("Prueba", "prueba23", new Date(), "prueba@prueba.com", null);
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+		try {
+			prueba = new Usuario("Prueba", "prueba23", new Date(), "prueba@prueba.com", "");
+		} catch (IllegalArgumentException e) {
+			// no pasa nada, debe ser asi
+		}
+		assert(prueba == null);
+	}
+	
 	// Prueba de getter/setter
 	@Test
 	public void testPassword() {
@@ -79,8 +150,19 @@ public class UsuarioTest {
 		if (l.size() > 0)
 			fail("La lista debería estar vacía");
 		
-		// Probamos a añadir un seguidor (nos vale el mismo)
-		u.addSeguidor(u);
+		// Probamos a incluirse a si mismo como seguidor
+		boolean sePuede = false;
+		try {
+			u.addSeguidor(u);
+			sePuede = true;
+		} catch (IllegalArgumentException e) {
+			// No pasa nada, esto DEBE ocurrir
+		}
+		// No se debe poder
+		assert(!sePuede);
+		
+		Usuario u0 = new Usuario("Rita", "Rita11", new Date(), "rita@rita.rita", "rita");
+		u.addSeguidor(u0);
 		
 		l  = u.getSeguidores();
 		

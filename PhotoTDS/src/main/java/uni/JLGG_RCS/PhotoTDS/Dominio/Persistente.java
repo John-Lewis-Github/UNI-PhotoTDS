@@ -29,11 +29,12 @@ public interface Persistente {
 	 * @param l la lista con elementos persistentes
 	 * @return una cadena con los identificadores separados por espacios
 	 */
-	public static <T extends Persistente> String idList2String(List<T> l) {
+	public static <T extends Persistente> String idList2String(List<T> l) {		
 		return l.stream()
 				.map(e -> e.getId())
 				.map(id -> Integer.toString(id))
-				.reduce("", (s1, s2) -> s1+" "+s2);
+				.reduce("", (s1, s2) -> s1+" "+s2)
+				.trim();
 	}
 	
 	/**

@@ -6,28 +6,53 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Publicacion implements Persistente {
+public abstract class Publicacion implements Persistente {
 	static final int ME_GUSTA_INICIAL = 0;
 	
-	private int id;
+	private Integer id;
+	
 	private String titulo;
 	private Date fecha;
 	private String descripcion;
+	
 	private int megusta;
+	
 	private List<Hashtag> hashtags;
 	private List<Comentario> comentarios;
 	private Usuario usuario;
 	
 	private final RepositorioHashtags repHashtags = RepositorioHashtags.INSTANCE;
 	
-	public Publicacion(String titulo, String descripcion) {
+	/**
+	 * Constructor de publicaciones. Toma el titulo y la descripcion,
+	 * mientras que el resto de atributos se inicializan directamente.
+	 * Su usuario queda inicializado a null.
+	 * 
+	 * Los parametros que toma deben ser distintos de null y de ""
+	 * 
+	 * @param titulo el titulo de la publicacion
+	 * @param descripcion la descripcion
+	 */
+	protected Publicacion(String titulo, String descripcion) {
+		id = null;
+		
+		if ((titulo == null) || (titulo.equals("")))
+			throw new IllegalArgumentException();
 		this.titulo = titulo;
+		
 		this.fecha = new Date();
+		
+		if ((descripcion == null) || (descripcion.equals("")))
+			throw new IllegalArgumentException();
 		this.descripcion = descripcion;
+		
 		this.megusta = ME_GUSTA_INICIAL;
+		
 		this.hashtags = new LinkedList<Hashtag>();
 		addHashtags(descripcion);
+		
 		this.comentarios = new LinkedList<Comentario>();
+		
 		this.usuario = null;
 	}
 
@@ -97,7 +122,6 @@ public class Publicacion implements Persistente {
 	
 	public void addComentario(Comentario comment) {
 		this.comentarios.add(comment);
-		// addHashtags(comment);
 	}
 	
 	public void addComentarios(Collection<Comentario> comentarios) {

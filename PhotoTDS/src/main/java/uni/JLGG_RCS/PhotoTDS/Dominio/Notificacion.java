@@ -5,6 +5,7 @@ import java.util.Date;
 public class Notificacion implements Persistente {
 
 	private Integer id;
+	
 	private final Date fecha;
 	private final Publicacion publicacion;	
 	

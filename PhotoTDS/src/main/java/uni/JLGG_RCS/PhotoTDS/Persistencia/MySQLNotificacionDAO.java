@@ -27,18 +27,20 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 	private static final String PUBLICACION = "publicacion";
 	
 	private ServicioPersistencia serv;
-	private PublicacionDAO<Foto> fotoDAO;
-	private PublicacionDAO<Album> albumDAO;
+	private FactoriaDAO fact;
 	private DAOPool pool;
 	private DateFormat dformat;
 	
 	private MySQLNotificacionDAO() {
 		serv = FactoriaServicioPersistencia.getInstance().getServicioPersistencia();
-		fotoDAO = MySQLFotoDAO.getInstance();
-		albumDAO = MySQLAlbumDAO.getInstance();
+		try {
+			fact = FactoriaDAO.getInstancia();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		pool = DAOPool.INSTANCE;
 		dformat = new SimpleDateFormat("dd/MM/yyyy");
-
 	}
 	
 	/**
@@ -55,24 +57,8 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 		Entidad entidad = new Entidad();
 		entidad.setNombre(NOTIFICACION);
 		
-		Publicacion publicacion = notificacion.getPublicacion();
-		String publicacionId = "";
-		if (publicacion != null) {
-			if (publicacion instanceof Foto) {
-				Foto foto = (Foto) publicacion;
-				fotoDAO.create(foto);
-				publicacionId = Integer.toString(foto.getId());
-			} 
-			else if (publicacion instanceof Album) {
-				Album album = (Album) publicacion;
-				albumDAO.create(album);
-				publicacionId = Integer.toString(album.getId());
-			}
-		}
-		
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
-				new Propiedad(FECHA, dformat.format(publicacion.getFecha())),
-				new Propiedad(PUBLICACION, publicacionId)
+				new Propiedad(FECHA, dformat.format(notificacion.getFecha()))
 				));
 		
 		entidad.setPropiedades(listaPropiedades);
@@ -87,8 +73,8 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 	public Notificacion EntidadANotificacion(Entidad entidad) {
 		/**
 		 * Por la semantica de los seguidores no habra ciclos nunca
+		 * No pueden seguirse a si mismos
 		 */
-		
 		String fechaStr = serv.recuperarPropiedadEntidad(entidad, FECHA);
 		Date fecha = null;
 		try {
@@ -99,18 +85,17 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 		
 		String publicacionIdStr = serv.recuperarPropiedadEntidad(entidad, PUBLICACION);
 		Integer publicacionId = null;
-		if (publicacionIdStr != "")
+		Publicacion publicacion = null;
+		if (publicacionIdStr != "") {
 			publicacionId = Integer.parseInt(publicacionIdStr);
+
+			// Vemos si es una publicacion
+			publicacion = fact.getFotoDAO().get(publicacionId);
 		
-		// TODO TESTEAR
-		// Como se supone que get(id) devuelve null si no lo tiene, basta comprobar alguno
-		
-		// Vemos si es una publicacion
-		Publicacion publicacion = fotoDAO.get(publicacionId);
-		
-		// Si no lo es, probamos con lo otro
-		if (publicacion == null)
-			publicacion = albumDAO.get(publicacionId);
+			// Si no lo es, probamos con lo otro
+			if (publicacion == null)
+				publicacion = fact.getAlbumDAO().get(publicacionId);
+		}
 		
 		// Si en este punto tambien es null es porque antes ya era null
 		// Ergo, no debería haber problema
@@ -125,11 +110,40 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 		 * registra una entidad en la base de datos y establece el
 		 * identificador
 		 */
-		if (notificacion.getId() == null) {
-			Entidad entidad = NotificacionAEntidad(notificacion);
-			entidad = serv.registrarEntidad(entidad);
-			notificacion.setId(entidad.getId());
+		if (notificacion.getId() != null)
+		return; 
+			
+		// Creo una entidad para la notificacion
+		Entidad entidad = NotificacionAEntidad(notificacion);
+		
+		// Registro la entidad y obtengo un identificador
+		entidad = serv.registrarEntidad(entidad);
+		notificacion.setId(entidad.getId());
+		
+		// Obtengo la lista de propiedades
+		List<Propiedad> listaPropiedades = entidad.getPropiedades();
+		
+		// Trato la referencia a la publicacion, persistente
+		Publicacion publicacion = notificacion.getPublicacion();
+		if (publicacion != null) {
+			String publicacionId = "";
+			if (publicacion instanceof Foto) {
+				Foto foto = (Foto) publicacion;
+				fact.getFotoDAO().create(foto);
+				publicacionId = Integer.toString(foto.getId());
+			} 
+			else if (publicacion instanceof Album) {
+				Album album = (Album) publicacion;
+				fact.getAlbumDAO().create(album);
+				publicacionId = Integer.toString(album.getId());
+			}
+			listaPropiedades.add(new Propiedad(PUBLICACION, publicacionId));
+		} else {
+			listaPropiedades.add(new Propiedad(PUBLICACION, ""));
 		}
+		
+		entidad.setPropiedades(listaPropiedades);
+		serv.modificarEntidad(entidad);
 	}
 
 	@Override
@@ -137,9 +151,14 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 		/**
 		 * Borra la entidad que tenga el mismo id que el usuario
 		 * Por tanto, la operacion puede no borrar ninguna entidad
+		 * En particular esto ocurre si el id es null
 		 */
+		if (notificacion.getId() == null)
+			return false;
+		
 		Entidad entidad = serv.recuperarEntidad(notificacion.getId());
 		pool.removeObject(notificacion.getId());
+		notificacion.setId(null);
 		return serv.borrarEntidad(entidad);
 	}
 
