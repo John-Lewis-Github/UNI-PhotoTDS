@@ -49,6 +49,7 @@ public class VentanaPrincipal {
 		framePrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		contenedor = new JPanel();
 		framePrincipal.setContentPane(contenedor);
+		contenedor.setBackground(Color.white);
 	}
 	
 	// Con este método se flexibiliza la creación del panel principal
