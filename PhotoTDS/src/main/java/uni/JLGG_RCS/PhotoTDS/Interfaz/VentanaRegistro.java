@@ -20,16 +20,20 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.JTextArea;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 
 public class VentanaRegistro {
 
 	private static final int ANCHURA = 450;
 	private static final int ALTURA = 600;
 	private static final int MARGEN_HORIZONTAL = 10;
-	private JFrame framePrincipal;
+	private JDialog framePrincipal;
 	private JPanel contenedor;
 	private JPanel panelPrincipal;
 	private JPanel panelTitulo;
@@ -59,8 +63,16 @@ public class VentanaRegistro {
 		});
 	}
 	
-	public JFrame getframePrincipal() {
-		return framePrincipal;
+	/**
+	 * Pone la ventana de registro visible o la oculta
+	 * @param b true o false dependiendo de si se quiere mostrar o esconder la ventana
+	 */
+	public void setVisible(boolean b) {
+		framePrincipal.setVisible(b);
+	}
+	
+	public void setLocationRelativeTo(Component c) {
+		framePrincipal.setLocationRelativeTo(c);
 	}
 	/**
 	 * Create the application.
@@ -90,9 +102,10 @@ public class VentanaRegistro {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		framePrincipal = new JFrame();
+		framePrincipal = new JDialog();
 		framePrincipal.setBounds(400, 50, ANCHURA, ALTURA);
-		framePrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		framePrincipal.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		framePrincipal.setModal(true);
 		
 		contenedor = new JPanel();
 		framePrincipal.setContentPane(contenedor);
@@ -224,7 +237,6 @@ public class VentanaRegistro {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				framePrincipal.dispose();
-				System.exit(0);
 			}
 		});
 		panelBotones.add(btnCancel);

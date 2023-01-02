@@ -6,6 +6,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.*;
 
@@ -19,7 +22,7 @@ public class VentanaPrincipal {
 	private JFrame framePrincipal;
 	private JPanel contenedor;
 	private JPanel menu;
-	private JPanel panelPrincipal;
+	private JPanel panelPublicaciones;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -36,11 +39,10 @@ public class VentanaPrincipal {
 	
 	public VentanaPrincipal() {
 		initialize();
-		menu = crearPanel(0);
+		menu = crearMenu();
 		contenedor.add(menu);
-		panelPrincipal = crearPanel(1);
-		contenedor.add(panelPrincipal);
-		rellenarMenu(menu);
+		panelPublicaciones = crearPanelPublicaciones();
+		contenedor.add(panelPublicaciones);
 	}
 
 	private void initialize() {
@@ -53,26 +55,29 @@ public class VentanaPrincipal {
 	}
 	
 	// Con este método se flexibiliza la creación del panel principal
-	private JPanel crearPanel(int tipo) {
+	/**
+	 *  Crea el panel de publicaciones, y devuelve su JPanel
+	 * @return devuelve un JPanel, que representa el panel de publicaciones
+	 */
+	private JPanel crearPanelPublicaciones() {
 		JPanel panel=new JPanel();
-		// JPanel panelPrincipal = new JPanel();
-		// contenedor.add(panelPrincipal);
-		if(tipo == 0) {
-			/**--Hacemos el menú de arriba--*/
-			fixSize(panel, ANCHURA, ALTURA_MENU);
-			panel.setBackground(Color.WHITE);
-			panel.setLayout(new BoxLayout(panel,BoxLayout.X_AXIS));
-		} else {
-			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			panel.setBackground(Color.blue);
-		}
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBackground(Color.blue);
 		return panel;
 	}
 	
-	
-	private void rellenarMenu(JPanel menu) {
-		/** Añadimos el nombre de la aplicación **/
+	/**
+	 * 	Crea el menu de la ventana principal, y devuelve su JPanel
+	 * @return devuelve un JPanel, que representa el menu
+	 */
+	private JPanel crearMenu() {
+		/**--Hacemos el menú de arriba--*/
+		JPanel menu = new JPanel();
 		JLabel titulo = new JLabel("PhotoTDS");
+		fixSize(menu, ANCHURA, ALTURA_MENU);
+		menu.setBackground(Color.WHITE);
+		menu.setLayout(new BoxLayout(menu,BoxLayout.X_AXIS));
+		/** Añadimos el nombre de la aplicación **/
 		titulo.setBackground(Color.red);
 		titulo.setHorizontalTextPosition(SwingConstants.CENTER);
 		titulo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -95,6 +100,12 @@ public class VentanaPrincipal {
 		nuevaFoto.setFocusPainted(false);
 		nuevaFoto.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		menu.add(nuevaFoto);
+		
+		nuevaFoto.addActionListener(e -> {
+			VentanaPublicar publicar = new VentanaPublicar();
+			publicar.setVisible(true);
+		});
+		
 		JPanel formateo = new JPanel();
 		fixSize(formateo, 110, ALTURA_MENU/2);
 		formateo.setBackground(menu.getBackground());
@@ -108,17 +119,6 @@ public class VentanaPrincipal {
 		lupa.setBackground(Color.WHITE);
 		lupa.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
 		menu.add(lupa);
-		
-		/*JMenu opcionesPremium = new JMenu("≡");
-		menubar.add(opcionesPremium);
-		JMenuItem premium=new JMenuItem("Premium");
-		JMenuItem generarPDF=new JMenuItem("Generar PDF");
-		JMenuItem generarExcel=new JMenuItem("Generar Excel");
-		JMenuItem topMeGusta=new JMenuItem("Top me gusta");
-		opcionesPremium.add(premium);
-		opcionesPremium.add(generarPDF);
-		opcionesPremium.add(generarExcel);
-		opcionesPremium.add(topMeGusta);*/
 		
 		/** Ponemos, de nuevo, espacio horizontal **/
 		
@@ -147,6 +147,8 @@ public class VentanaPrincipal {
 		opcionesPremium.setBackground(Color.WHITE);
 		opcionesPremium.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
 		menu.add(opcionesPremium);
+		
+		return menu;
 	}
 	
 	private void fixSize(JComponent comp, int x, int y) {

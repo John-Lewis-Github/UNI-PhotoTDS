@@ -59,6 +59,16 @@ public enum Controlador {
 	}
 	
 	/**
+	 * 
+	 * @param nombreUsuario el nombre del usuario
+	 * @return
+	 */
+	public List<Publicacion> getPublicacionesUsuario(String nombreUsuario){
+		//TODO terminar metodo
+		return null;
+	}
+	
+	/**
 	 * Busca usuarios con un patron. Devuelve todos los usuarios cuyo nombre
 	 * completo, nombre de usuario o email contiene al patron descrito. Es 
 	 * case-insensitive.
@@ -90,6 +100,11 @@ public enum Controlador {
 		Hashtag h = hashRepo.getHashtag(cadenaHashtag);
 		return pubRepo.findPublicaciones(h);
 	}
+	
+	public void publicarImagen(String comentario, String path) {
+		//TODO Hacer funcion
+	}
+	
 	
 	public void generarExcel(Usuario u) {
 		if (u.isPremium())
