@@ -85,11 +85,6 @@ public class VentanaRegistro {
 		
 		addBotones(panelPrincipal);
 	}
-	
-
-
-	
-
 
 	/**
 	 * Initialize the contents of the frame.

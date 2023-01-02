@@ -8,8 +8,8 @@ public class Album extends Publicacion {
 
 	private List<Foto> fotos;
 
-	public Album(String titulo, String descripcion) {
-		super(titulo, descripcion);
+	public Album(String descripcion) {
+		super(descripcion);
 		this.fotos = new ArrayList<Foto>();
 	}
 	

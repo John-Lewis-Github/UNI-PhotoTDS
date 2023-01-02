@@ -40,8 +40,8 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 	private static final String FOTOS = "fotos";
 	
 	@Override
-	protected Album crearInstancia(String titulo, String descripcion) {
-		return new Album(titulo, descripcion);
+	protected Album crearInstancia(String descripcion) {
+		return new Album(descripcion);
 	}
 	
 	@Override 

@@ -39,14 +39,16 @@ public class PublicacionDAOTest {
 		fotoDAO = factoria.getFotoDAO();
 		
 		u = new Usuario("Pepito", "leTongue", new Date(), "letongue56@hotmail.es", "aaaa");
-		foto = new Foto("Titulo", "Descripcion", "/home/ruben/Firefox_wallpaper.png");
+		foto = new Foto("Descripcion", "/home/ruben/Firefox_wallpaper.png");
 		foto.setUsuario(u);
 		u.addFoto(foto);
 		u.setFotoPerfil(foto);
+		album = new Album("Un album #mas");
+		album.addFoto(foto);
 	}
 	
 	@Test
-	public void testFotoCreate() {
+	public void testFoto() {
 		
 		if (foto.getId() != null)
 			fail("La foto no deberia estar guardada");
@@ -63,6 +65,10 @@ public class PublicacionDAOTest {
 		
 		if (foto2.getUsuario() == null)
 			fail("No se ha guardado bien el usuario");
+	}
+	
+	@Test
+	public void testAlbumCreate() {
 		
 	}
 

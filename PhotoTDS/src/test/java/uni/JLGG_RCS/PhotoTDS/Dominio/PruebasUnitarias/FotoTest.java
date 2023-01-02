@@ -18,7 +18,7 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
 
 public class FotoTest {
 
-	private Foto f = new Foto("Mi foto", "Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
+	private Foto f = new Foto("Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
 
 	@Test
 	public void testHashtags() {		

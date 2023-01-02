@@ -33,12 +33,8 @@ public abstract class Publicacion implements Persistente {
 	 * @param titulo el titulo de la publicacion
 	 * @param descripcion la descripcion
 	 */
-	protected Publicacion(String titulo, String descripcion) {
+	protected Publicacion(String descripcion) {
 		id = null;
-		
-		if ((titulo == null) || (titulo.equals("")))
-			throw new IllegalArgumentException();
-		this.titulo = titulo;
 		
 		this.fecha = new Date();
 		
