@@ -58,7 +58,10 @@ public class VentanaRegistro {
 			}
 		});
 	}
-
+	
+	public JFrame getframePrincipal() {
+		return framePrincipal;
+	}
 	/**
 	 * Create the application.
 	 */
