@@ -1,7 +1,10 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import uni.JLGG_RCS.PhotoTDS.Persistencia.DAOException;
 import uni.JLGG_RCS.PhotoTDS.Persistencia.FactoriaDAO;
@@ -10,19 +13,10 @@ import uni.JLGG_RCS.PhotoTDS.Persistencia.UsuarioDAO;
 public enum RepositorioUsuarios {
 	INSTANCE;
 
-	private FactoriaDAO fact;
-	
-	private UsuarioDAO usDAO;
-	private List<Usuario> usuarios;
+	private Map<String, Usuario> usuarios;
 	
 	private RepositorioUsuarios() {
-		try {
-			fact = FactoriaDAO.getInstancia();
-		} catch (DAOException e) {
-			e.printStackTrace();
-		}
-		usDAO = fact.getUsuarioDAO();
-		usuarios = usDAO.getAll();
+		usuarios = new HashMap<>();
 	}
 	
 	/**
@@ -34,15 +28,17 @@ public enum RepositorioUsuarios {
 	 * @return true si se ha podido crear el usuario, false si no
 	 */
 	public boolean addUsuario(Usuario usuario) {
-		boolean existente = usuarios.stream()
-				.anyMatch(u -> u.equals(usuario));
-		
-		if (!existente) {
-			usuarios.add(usuario);
-			usDAO.create(usuario);
-		}
-		
-		return !existente;
+		Usuario previo = usuarios.putIfAbsent(usuario.getNombreUsuario(), usuario);
+		return previo == null;
+	}
+	
+	/**
+	 * Incluye una coleccion de usuarios en el repositorio de usuarios
+	 * 
+	 * @param coll una coleccion de usuarios
+	 */
+	public void addUsuarios(Collection<Usuario> coll) {
+		coll.stream().forEach(u -> addUsuario(u));
 	}
 	
 	/**
@@ -54,13 +50,14 @@ public enum RepositorioUsuarios {
 	 */
 	public List<Usuario> findUsuarios(String patron) {
 		String minuscula = patron.toLowerCase();
-		List<Usuario> porNombreUsuario = usuarios.stream()
-				.filter(u -> u.getNombreUsuario().toLowerCase().contains(minuscula))
+		List<Usuario> porNombreUsuario = usuarios.keySet().stream()
+				.filter(s -> s.toLowerCase().contains(minuscula))
+				.map(s -> usuarios.get(s))
 				.toList();
-		List<Usuario> porNombreCompleto = usuarios.stream()
+		List<Usuario> porNombreCompleto = usuarios.values().stream()
 				.filter(u -> u.getNombreCompleto().toLowerCase().contains(minuscula))
 				.toList();
-		List<Usuario> porEmail = usuarios.stream()
+		List<Usuario> porEmail = usuarios.values().stream()
 				.filter(u -> u.getEmail().toLowerCase().contains(minuscula))
 				.toList();
 		
@@ -80,11 +77,10 @@ public enum RepositorioUsuarios {
 	 * @return el usuario que con tales atributos, o null si no se encuentra
 	 */
 	public Usuario recuperarUsuario(String nombreUsuario, String password) {
-		// Filtra por nombre y password
-		return usuarios.stream()
-				.filter(u -> u.getNombreUsuario().equals(nombreUsuario))
-				.filter(u -> u.getPassword().equals(password))
-				.findAny()
-				.orElse(null);
+		Usuario usuario = usuarios.get(nombreUsuario);
+		if (password.equals(usuario.getPassword()))
+			return usuario;
+		else
+			return null;
 	}
 }

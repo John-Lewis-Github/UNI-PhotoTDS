@@ -369,7 +369,7 @@ public class Usuario implements Persistente {
 	}
 	
 	/**
-	 * Publica una foto, avisando a todos sus seguidres mediante notificaciones
+	 * Publica una foto, avisando a todos sus seguidores mediante notificaciones
 	 * 
 	 * @param foto la foto a publicar
 	 */
@@ -380,6 +380,20 @@ public class Usuario implements Persistente {
 			s.addNotificacion(nueva);
 	}
 
+	public List<Publicacion> getPublicacionesRelevantes() {
+		List<Publicacion> lista = new LinkedList<>();
+		lista.addAll(fotos);
+		lista.addAll(albumes);
+		
+		seguidores.stream()
+			.forEach(u -> {
+				lista.addAll(u.getFotos());
+				lista.addAll(u.getAlbumes());
+			});
+		
+		return lista;
+	}
+	
 	/**
 	 * Usa el nombre de usuario para establecer igualdad
 	 */
