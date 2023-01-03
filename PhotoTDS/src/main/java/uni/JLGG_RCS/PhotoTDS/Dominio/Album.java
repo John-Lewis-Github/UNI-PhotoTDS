@@ -46,8 +46,8 @@ public class Album extends Publicacion {
 	}
 
 	@Override
-	public Image getImagenPrincipal() {
-		return fotos.get(0).getImagen();
+	public Image getImagenPrincipal(int width, int height) {
+		return fotos.get(0).getImagenPrincipal(width, height);
 	}
 
 }

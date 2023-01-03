@@ -47,8 +47,8 @@ public class Foto extends Publicacion {
 	}
 
 	@Override
-	public Image getImagenPrincipal() {
-		return getImagen();
+	public Image getImagenPrincipal(int width, int height) {
+		return getImagen().getScaledInstance(width, height, 0);
 	}
 
 }

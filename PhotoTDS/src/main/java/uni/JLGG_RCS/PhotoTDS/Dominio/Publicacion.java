@@ -147,7 +147,14 @@ public abstract class Publicacion implements Persistente {
 		this.usuario = usuario;
 	}
 	
-	public abstract Image getImagenPrincipal();
+	/**
+	 * Devuelve una imagen escalada que represente a la publicacion
+	 * 
+	 * @param width la anchura de la imagen
+	 * @param height la altura de la imagen
+	 * @return una imagen escalada
+	 */
+	public abstract Image getImagenPrincipal(int width, int height);
 
 	
 }
