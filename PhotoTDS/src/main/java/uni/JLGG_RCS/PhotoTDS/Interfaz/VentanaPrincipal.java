@@ -9,8 +9,12 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
 
 import javax.swing.*;
+
+import uni.JLGG_RCS.PhotoTDS.Controlador.Controlador;
+import uni.JLGG_RCS.PhotoTDS.Dominio.Publicacion;
 
 public class VentanaPrincipal {
 
@@ -18,6 +22,9 @@ public class VentanaPrincipal {
 	private static final int ALTURA = 700;
 	private static final int ANCHURA_TITULO = 600;
 	private static final int ALTURA_MENU = 70;
+	private static final int ALTURA_PANEL_PUBLICACIONES = ALTURA - ALTURA_MENU;
+	private static final int ANCHURA_ENTRADA = ANCHURA;
+	private static final int ALTURA_ENTRADA = ALTURA/10;
 	
 	private JFrame framePrincipal;
 	private JPanel contenedor;
@@ -46,9 +53,13 @@ public class VentanaPrincipal {
 	}
 
 	private void initialize() {
+		
+		//inicializamos el frame principal
 		framePrincipal = new JFrame();
 		framePrincipal.setSize(ANCHURA, ALTURA);
 		framePrincipal.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		//y ponemos el panel contenedor como panel de contenido del frame principal
 		contenedor = new JPanel();
 		framePrincipal.setContentPane(contenedor);
 		contenedor.setBackground(Color.white);
@@ -63,6 +74,25 @@ public class VentanaPrincipal {
 		JPanel panel=new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setBackground(Color.blue);
+		fixSize(panel, ANCHURA, ALTURA_PANEL_PUBLICACIONES);
+		List<Publicacion> listaPublicaciones = Controlador.INSTANCE.getListaPrincipalUsuario();
+		
+		//Lista publicaciones
+		JList<EntradaPublicacion> lista=new JList<EntradaPublicacion>();
+		DefaultListModel<EntradaPublicacion> model= new DefaultListModel<>();
+		listaPublicaciones.stream()
+			.map(p -> new EntradaPublicacion(ANCHURA_ENTRADA, ALTURA_ENTRADA, p))
+			.forEach(e -> model.addElement(e));
+		
+		lista.setModel(model);
+		lista.setCellRenderer(new EntradaPublicacionListRenderer());
+				
+		JScrollPane scroll=new JScrollPane(lista);
+		fixSize(scroll,ANCHURA,ALTURA_PANEL_PUBLICACIONES);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		panel.add(scroll);
+		
 		return panel;
 	}
 	
