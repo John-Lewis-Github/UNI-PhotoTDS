@@ -154,6 +154,10 @@ public abstract class Publicacion implements Persistente {
 		this.descripcion += nuevosHashtags;
 	}
 
+	/**
+	 * Getter del numero de meGusta
+	 * @return los meGusta
+	 */
 	public int getMeGusta() {
 		return megusta;
 	}

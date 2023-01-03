@@ -107,8 +107,9 @@ public enum Controlador implements FotosListener{
 	 * @param password el password del usuario
 	 * @return el usuario con tales atributos, o null si no se encuentra
 	 */
-	public Usuario recuperarUsuario(String nombreUsuario, String password) {
-		return usuario = usRepo.recuperarUsuario(nombreUsuario, password);
+	public boolean recuperarUsuario(String nombreUsuario, String password) {
+		usuario = usRepo.recuperarUsuario(nombreUsuario, password);
+		return usuario != null;
 	}
 	
 	/**

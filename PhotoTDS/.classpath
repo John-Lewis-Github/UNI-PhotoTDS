@@ -29,7 +29,7 @@
 	<classpathentry kind="lib" path="lib/lib/javax.persistence-api-2.2.jar"/>
 	<classpathentry kind="lib" path="lib/lib/mysql-connector-java-5.1.18-bin.jar"/>
 	<classpathentry kind="lib" path="lib/DriverPersistencia.jar"/>
-	<classpathentry kind="lib" path="/home/juanluis/git/repository/PhotoTDS/lib/ComponenteFotos-1.0.jar"/>
-	<classpathentry kind="lib" path="/home/juanluis/git/repository/PhotoTDS/lib/Pulsador.jar"/>
+	<classpathentry kind="lib" path="lib/ComponenteFotos-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/Pulsador.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

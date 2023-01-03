@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class VentanaPrincipal {
 	private static final int ALTURA = 700;
 	private static final int ANCHURA_TITULO = 600;
 	private static final int ALTURA_MENU = 70;
-	private static final int ALTURA_PANEL_PUBLICACIONES = ALTURA - ALTURA_MENU;
+	private static final int ALTURA_PANEL_PUBLICACIONES = ALTURA - ALTURA_MENU - 45;
 	private static final int ANCHURA_ENTRADA = ANCHURA;
 	private static final int ALTURA_ENTRADA = ALTURA/10;
 	
@@ -77,7 +78,7 @@ public class VentanaPrincipal {
 		fixSize(panel, ANCHURA, ALTURA_PANEL_PUBLICACIONES);
 		List<Publicacion> listaPublicaciones = Controlador.INSTANCE.getListaPrincipalUsuario();
 		
-		//Lista publicaciones
+		// Lista publicaciones
 		JList<EntradaPublicacion> lista=new JList<EntradaPublicacion>();
 		DefaultListModel<EntradaPublicacion> model= new DefaultListModel<>();
 		listaPublicaciones.stream()
