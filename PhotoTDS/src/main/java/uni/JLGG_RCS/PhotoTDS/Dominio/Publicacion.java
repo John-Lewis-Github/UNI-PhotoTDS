@@ -191,18 +191,11 @@ public abstract class Publicacion implements Persistente {
 	}
 	
 	/**
-	 * Devuelve una imagen escalada que represente a la publicacion
+	 * Devuelve una imagen que represente a la publicacion
 	 * 
-	 * @param width la anchura de la imagen
-	 * @param height la altura de la imagen
-	 * @return una imagen escalada
+	 * @return una imagen para la publicacion
 	 */
-	public abstract Image getImagenPrincipal(int width, int height);
+	public abstract Image getImagenPrincipal();
 
-	public Image getImagenUsuario() {
-		if (usuario.getFotoPerfil() == null)
-			return null;
-		else
-			return usuario.getFotoPerfil().getImagen();
-	}
+	
 }

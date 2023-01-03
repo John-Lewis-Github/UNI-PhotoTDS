@@ -8,8 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class Usuario implements Persistente {
-	
+public class Usuario implements Persistente, NotificacionListener {
 	private static final int MAX_CARACTERES_PRESENTACION = 200;
 	
 	private Integer id;
@@ -356,6 +355,11 @@ public class Usuario implements Persistente {
 		return total*(1-descuento.getDescuento());
 	}
 	
+	@Override
+	public void avisarNotificacion(Notificacion e) {
+		this.addNotificacion(e);
+	}
+	
 	/**
 	 * Publica una foto, avisando a todos sus seguidres mediante notificaciones
 	 * 
@@ -365,7 +369,7 @@ public class Usuario implements Persistente {
 		addFoto(foto);
 		Notificacion nueva = new Notificacion(foto);
 		for (Usuario s : seguidores)
-			s.addNotificacion(nueva);
+			s.avisarNotificacion(nueva);
 	}
 	
 	/**
@@ -377,7 +381,7 @@ public class Usuario implements Persistente {
 		addAlbum(album);
 		Notificacion nueva = new Notificacion(album);
 		for (Usuario s : seguidores)
-			s.addNotificacion(nueva);
+			s.avisarNotificacion(nueva);
 	}
 
 	public List<Publicacion> getPublicacionesRelevantes() {
@@ -385,11 +389,9 @@ public class Usuario implements Persistente {
 		lista.addAll(fotos);
 		lista.addAll(albumes);
 		
-		seguidores.stream()
-			.forEach(u -> {
-				lista.addAll(u.getFotos());
-				lista.addAll(u.getAlbumes());
-			});
+		notificaciones.stream()
+			.map(n -> n.getPublicacion())
+			.forEach(p -> lista.add(p));
 		
 		return lista;
 	}

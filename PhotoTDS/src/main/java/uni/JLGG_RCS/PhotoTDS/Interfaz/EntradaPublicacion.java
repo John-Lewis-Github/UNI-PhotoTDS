@@ -7,19 +7,24 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 
 public class EntradaPublicacion extends JPanel {
-
 	
+	private Image imagenPublicacion;
+	private Image imagenEscalada;
 	/**
 	 * Esta clase representa una entrada del conjunto de publicaciones mostrado
 	 * en la ventana principal.
@@ -49,13 +54,29 @@ public class EntradaPublicacion extends JPanel {
 		this.setBackground(Color.WHITE);
 		
 		//Le ponemos la imagen pasada como parametro en el constructor
-		JLabel lblImagen=new JLabel();
-		//lblimagen.setIcon(new ImageIcon(getClass().getResource(path)));
-		Image imagenPublicacion = publicacion.getImagenPrincipal(ancho/3, alto);
-		ImageIcon iconoImagenPublicacion = new ImageIcon(imagenPublicacion);
+		JLabel lblImagen = new JLabel();
+		imagenPublicacion = publicacion.getImagenPrincipal();
+		imagenEscalada = imagenPublicacion.getScaledInstance(ancho/3, alto, 0);
+		ImageIcon iconoImagenPublicacion = new ImageIcon(imagenEscalada);
 		lblImagen.setIcon(iconoImagenPublicacion);
 		fixSize(lblImagen,ancho/3,alto);
 		
+		// Al pinchar en la imagen debemos obtener un dialogo con la imagen real
+		lblImagen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JDialog dialog = new JDialog();
+				dialog.setModal(true);
+				JPanel panel = new JPanel();
+				dialog.setContentPane(panel);
+				
+				JLabel lblImagenAmpliada = new JLabel();
+				ImageIcon iconoAmpliada = new ImageIcon(imagenPublicacion);
+				lblImagenAmpliada.setIcon(iconoAmpliada);
+				panel.add(lblImagenAmpliada);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			}
+		});
 		
 		//ponemos un panel con un BoxLayout orientado en el eje Y para colocar el resto de la info
 		JPanel panelInfo=new JPanel();
@@ -68,17 +89,24 @@ public class EntradaPublicacion extends JPanel {
 		panelBotonesyMeGusta.setLayout(new FlowLayout());
 		fixSize(panelBotonesyMeGusta, 2*ancho/3, alto/2);
 		
+		//metemos el contador de me gusta
+		JLabel lblNumeroMeGustas = new JLabel(publicacion.getMeGusta() + " Me gusta");
+		lblNumeroMeGustas.setFont(new Font("Dialog", Font.ITALIC, 15));
+		
 		//metemos el boton de me gusta
 		JButton botonMeGusta = new JButton("❤️");
 		botonMeGusta.setForeground(Color.white);
 		
+		// Al dar "meGusta" se repintara la etiqueta de "meGusta"
+		botonMeGusta.addActionListener(e -> {
+			Controlador.INSTANCE.darMeGusta(publicacion);
+			lblNumeroMeGustas.setText(publicacion.getMeGusta() + " Me gusta");
+			lblNumeroMeGustas.repaint();
+		});
+		
 		//metemos el boton de comentar 💬
 		JButton botonComentar = new JButton("🗨︎");
 		botonComentar.setForeground(Color.white);
-		
-		//metemos el contador de me gusta
-		JLabel lblNumeroMeGustas = new JLabel(publicacion.getMeGusta() + " Me gusta");
-		lblNumeroMeGustas.setFont(new Font("Dialog", Font.ITALIC, 15));
 		
 		//ponemos un panel con un FlowLayout para poner la imagen del usuario
 		//que ha subido la publicacion, y su nombre

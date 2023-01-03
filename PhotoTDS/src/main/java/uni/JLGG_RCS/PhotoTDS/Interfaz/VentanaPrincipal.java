@@ -66,7 +66,6 @@ public class VentanaPrincipal {
 		contenedor.setBackground(Color.white);
 	}
 	
-	// Con este método se flexibiliza la creación del panel principal
 	/**
 	 *  Crea el panel de publicaciones, y devuelve su JPanel
 	 * @return devuelve un JPanel, que representa el panel de publicaciones
@@ -88,8 +87,8 @@ public class VentanaPrincipal {
 		lista.setModel(model);
 		lista.setCellRenderer(new EntradaPublicacionListRenderer());
 				
-		JScrollPane scroll=new JScrollPane(lista);
-		fixSize(scroll,ANCHURA,ALTURA_PANEL_PUBLICACIONES);
+		JScrollPane scroll = new JScrollPane(lista);
+		fixSize(scroll, ANCHURA, ALTURA_PANEL_PUBLICACIONES);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		panel.add(scroll);

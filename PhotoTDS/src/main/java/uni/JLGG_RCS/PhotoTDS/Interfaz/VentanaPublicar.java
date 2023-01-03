@@ -71,7 +71,6 @@ public class VentanaPublicar {
 		panelSubirFoto = crearPanelSubirFoto();
 		frame.setContentPane(panelSubirFoto);
 		panelFotoSeleccionada = crearPanelFotoSeleccionada();
-		//frame.setContentPane(panelFotoSeleccionada);
 	}
 
 	private void initialize() {

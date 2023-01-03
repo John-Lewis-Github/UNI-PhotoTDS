@@ -9,19 +9,37 @@ public class Album extends Publicacion {
 
 	private List<Foto> fotos;
 
+	/**
+	 * Constructor de albumes. Inicialmente no tiene fotos
+	 * 
+	 * @param titulo el titulo del album
+	 * @param descripcion la descripcion de la publicacion
+	 */
 	public Album(String titulo, String descripcion) {
 		super(titulo, descripcion);
 		this.fotos = new ArrayList<Foto>();
 	}
 	
-	public void addFoto(Foto f) {
-		this.fotos.add(f);
+	/**
+	 * Incluye una foto en el album
+	 * @param foto la nueva foto del album
+	 */
+	public void addFoto(Foto foto) {
+		this.fotos.add(foto);
 	}
 	
+	/**
+	 * Getter de las fotos
+	 * @return la lista de fotos del album
+	 */
 	public List<Foto> getFotos() {
 		return new ArrayList<Foto>(fotos);
 	}
 	
+	/**
+	 * Setter de las fotos
+	 * @param fotos la lista de fotos del album
+	 */
 	public void setFotos(List<Foto> fotos) {
 		this.fotos = fotos;
 	}
@@ -46,8 +64,9 @@ public class Album extends Publicacion {
 	}
 
 	@Override
-	public Image getImagenPrincipal(int width, int height) {
-		return fotos.get(0).getImagenPrincipal(width, height);
+	public Image getImagenPrincipal() {
+		// Se toma la primera foto
+		return fotos.get(0).getImagenPrincipal();
 	}
 
 }

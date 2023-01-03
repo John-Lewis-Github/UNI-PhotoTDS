@@ -192,16 +192,21 @@ public enum Controlador implements FotosListener{
 		usuario.publicarFoto(foto);
 	}
 	
-	public Image getImagenUsuario(Publicacion publicacion) {
-		Image imagen = publicacion.getImagenUsuario();
+	public Image getImagenUsuario(Usuario usuario) {
+		Foto fotoPerfil = usuario.getFotoPerfil();
+		Image imagen = fotoPerfil.getImagen();
 		if (imagen == null)
 			try {
-				imagen = ImageIO.read(imagen.getClass().getResource(RUTA_DEFAULT_PROF_PIC));
+				imagen = ImageIO.read(this.getClass().getResource(RUTA_DEFAULT_PROF_PIC));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		return imagen;
+	}
+	
+	public Image getImagenUsuario(Publicacion publicacion) {
+		return getImagenUsuario(publicacion.getUsuario());
 	}
 	
 	/**
@@ -257,6 +262,14 @@ public enum Controlador implements FotosListener{
 			// Se publica la foto
 			usuario.publicarFoto(foto);
 		}
+	}
+
+	/**
+	 * Permite darle "meGusta" a una publicacion
+	 * @param publicacion la publicacion a la que darle "meGusta"
+	 */
+	public void darMeGusta(Publicacion publicacion) {
+		publicacion.darMeGusta();
 	}
 	
 }

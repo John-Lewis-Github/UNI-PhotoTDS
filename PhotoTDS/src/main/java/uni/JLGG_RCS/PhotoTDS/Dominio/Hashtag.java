@@ -15,6 +15,31 @@ public class Hashtag {
 	private final String contenido;
 	
 	/**
+	 * Metodo estatico que determina si una cadena cumple los requisitos
+	 * necesarios para representar un hashtag
+	 * @param contenido
+	 * @return
+	 */
+	public static boolean verificaHashtag(String contenido) {
+		if (contenido.charAt(0) != '#') 
+			contenido = "#" + contenido;
+		
+		// Primero se verifica si la longitud es correcta
+		boolean longitudOk = contenido.length() <= MAX_HASHTAG_CHARS;
+		if (!longitudOk)
+			return false;
+		
+		// Si el paso anterior lo permite, vemos si se usan caracteres correctos
+		boolean caracteresOk = contenido.substring(1).matches(PATRON_CARACTERES);
+		if (!caracteresOk)
+			return false;
+		
+		// Si ambos criterios se cumplen, la cadena es válida
+		return true;
+	}
+	
+	
+	/**
 	 * Constructor de hashtags. Por la forma de los hashtags, es necesario
 	 * que se cumplan ciertas condiciones en la cadena que lo genera:
 	 * 
@@ -28,9 +53,9 @@ public class Hashtag {
 	 * @throws IllegalArgumentException
 	 */
 	public Hashtag(String contenido) throws IllegalArgumentException {
-		if (contenido.charAt(0) != '#') {
+		if (contenido.charAt(0) != '#') 
 			contenido = "#" + contenido;
-		}
+		
 		contenido = contenido.toLowerCase();
 		if (contenido.length() > MAX_HASHTAG_CHARS) {
 			throw new IllegalArgumentException(ERROR_LONGITUD);
@@ -39,13 +64,6 @@ public class Hashtag {
 			throw new IllegalArgumentException(ERROR_CARACTERES + "Hashtag: " + contenido.substring(1));
 		}
 		this.contenido = contenido;
-	}
-	
-	public static boolean verificaHashtag(String contenido) {
-		boolean longitudOk = contenido.length() <= MAX_HASHTAG_CHARS;
-		boolean caracteresOk = contenido.substring(1).matches(PATRON_CARACTERES);
-		
-		return longitudOk && caracteresOk;
 	}
 	
 	public String getContenido() {

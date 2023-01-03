@@ -1,8 +1,11 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
 import java.util.Date;
+import java.util.EventObject;
 
 public class Notificacion implements Persistente {
+
+	private static final long serialVersionUID = -751224586408912519L;
 
 	private Integer id;
 	
@@ -22,7 +25,6 @@ public class Notificacion implements Persistente {
 	public Notificacion(Publicacion publicacion) {
 		this(publicacion, new Date());
 	}
-	
 	
 	
 	@Override
