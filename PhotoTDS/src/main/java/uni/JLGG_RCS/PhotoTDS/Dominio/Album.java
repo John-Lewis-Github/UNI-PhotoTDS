@@ -1,5 +1,6 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,11 @@ public class Album extends Publicacion {
 		return fotos.stream()
 				.map(f -> f.getMeGusta())
 				.reduce(0, (x,y)->x+y);
+	}
+
+	@Override
+	public Image getImagenPrincipal() {
+		return fotos.get(0).getImagen();
 	}
 
 }

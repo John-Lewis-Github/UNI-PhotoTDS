@@ -1,10 +1,13 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
+import java.awt.Image;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Publicacion implements Persistente {
 	static final int ME_GUSTA_INICIAL = 0;
@@ -17,7 +20,7 @@ public abstract class Publicacion implements Persistente {
 	
 	private int megusta;
 	
-	private List<Hashtag> hashtags;
+	private Set<Hashtag> hashtags;
 	private List<Comentario> comentarios;
 	private Usuario usuario;
 	
@@ -48,7 +51,7 @@ public abstract class Publicacion implements Persistente {
 		
 		this.megusta = ME_GUSTA_INICIAL;
 		
-		this.hashtags = new LinkedList<Hashtag>();
+		this.hashtags = new HashSet<Hashtag>();
 		addHashtags(descripcion);
 		
 		this.comentarios = new LinkedList<Comentario>();
@@ -82,7 +85,6 @@ public abstract class Publicacion implements Persistente {
 		this.fecha = fecha;
 	}
 	
-	
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -96,12 +98,21 @@ public abstract class Publicacion implements Persistente {
 		return new LinkedList<Hashtag>(hashtags);
 	}
 
-	// Los hashtags sólo se introducen como parte de un comentario OJO
+	// Los hashtags se introducen como parte de un comentario
 	private void addHashtags(String texto) {
 		List<String> palabras = Arrays.asList(texto.split(" "));
 		palabras.stream()
 				.filter(s -> (s.charAt(0) == '#'))
 				.forEach(s -> this.hashtags.add(repHashtags.getHashtag(s)));
+	}
+	
+	public void addHashtags(Collection<Hashtag> hashtags) {
+		String nuevosHashtags = hashtags.stream()
+			.filter(h -> this.hashtags.add(h))
+			.map(h -> h.getContenido())
+			.reduce("", (s1, s2) -> s1 + " " + s2);
+		
+		this.descripcion += nuevosHashtags;
 	}
 
 	public int getMeGusta() {
@@ -135,6 +146,8 @@ public abstract class Publicacion implements Persistente {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+	
+	public abstract Image getImagenPrincipal();
 
 	
 }

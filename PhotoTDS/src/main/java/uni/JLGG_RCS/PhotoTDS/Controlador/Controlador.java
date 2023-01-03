@@ -192,9 +192,41 @@ public enum Controlador implements FotosListener{
 			genPDF.generarPDF(usuario);
 	}
 
+	/**
+	 * Cuando el componente cargador de fotos toma un archivo XML
+	 * y obtiene una serie de fotos, el controlador se encarga de 
+	 * subir todas estas fotos 
+	 */
 	@Override
 	public void notificaNuevasFotos(FotosEvent e) {
-		Fotos f = cargador.nuevasFotos();
+		// Se obtienen las fotos del cargador
+		Fotos fotos = cargador.nuevasFotos();
+		
+		// Para cada una
+		for (umu.tds.fotos.Foto f : fotos.getFoto()) {
+			// Se obtienen los atributos
+			String titulo = f.getTitulo();
+			String descripcion = f.getDescripcion();
+			String path = f.getPath();
+			
+			// Se crea una instancia de Foto para PhotoTDS
+			Foto foto = new Foto(titulo, descripcion, path);
+			
+			// Se incluyen los hashtags
+			List<Hashtag> hashtags = f.getHashTags().stream()
+					.map(h -> h.getHashTag().get(0))
+					.filter(s -> Hashtag.verificaHashtag(s))
+					.map(s -> hashRepo.getHashtag(s))
+					.toList();
+			foto.addHashtags(hashtags);
+			
+			// Se crea y registra la foto
+			pubRepo.addPublicacion(foto);
+			fotoDAO.create(foto);
+			
+			// Se publica la foto
+			usuario.publicarFoto(foto);
+		}
 	}
 	
 }
