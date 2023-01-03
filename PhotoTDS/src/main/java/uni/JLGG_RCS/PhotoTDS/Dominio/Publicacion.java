@@ -156,5 +156,10 @@ public abstract class Publicacion implements Persistente {
 	 */
 	public abstract Image getImagenPrincipal(int width, int height);
 
-	
+	public Image getImagenUsuario() {
+		if (usuario.getFotoPerfil() == null)
+			return null;
+		else
+			return usuario.getFotoPerfil().getImagen();
+	}
 }

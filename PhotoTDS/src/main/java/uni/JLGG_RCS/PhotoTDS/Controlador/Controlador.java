@@ -1,9 +1,13 @@
 package uni.JLGG_RCS.PhotoTDS.Controlador;
 
+import java.awt.Image;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import umu.tds.fotos.ComponenteCargadorFotos;
 import umu.tds.fotos.Fotos;
@@ -28,6 +32,8 @@ public enum Controlador implements FotosListener{
 	INSTANCE;
 	
 	private static final int MAX_PUBLICACIONES_USUARIO = 20;
+	 private static final String RUTA_DEFAULT_PROF_PIC = "/default_user_pic.png";
+
 	
 	private FactoriaDAO fact;
 	private UsuarioDAO usDAO;
@@ -172,6 +178,18 @@ public enum Controlador implements FotosListener{
 		
 		// Se publica la foto
 		usuario.publicarFoto(foto);
+	}
+	
+	public Image getImagenUsuario(Publicacion publicacion) {
+		Image imagen = publicacion.getImagenUsuario();
+		if (imagen == null)
+			try {
+				imagen = ImageIO.read(imagen.getClass().getResource(RUTA_DEFAULT_PROF_PIC));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return imagen;
 	}
 	
 	/**
