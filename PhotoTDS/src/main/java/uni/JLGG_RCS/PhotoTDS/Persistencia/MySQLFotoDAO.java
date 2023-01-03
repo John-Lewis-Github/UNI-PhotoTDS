@@ -36,8 +36,8 @@ public class MySQLFotoDAO extends MySQLPublicacionDAO<Foto>{
 	private static final String PATH = "path";
 	
 	@Override
-	protected Foto crearInstancia(String descripcion) {
-		return new Foto(descripcion);
+	protected Foto crearInstancia(String titulo, String descripcion) {
+		return new Foto(titulo, descripcion);
 	}
 	
 	@Override

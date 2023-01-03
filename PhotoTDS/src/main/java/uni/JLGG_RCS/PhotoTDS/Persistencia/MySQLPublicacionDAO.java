@@ -64,6 +64,7 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		entidad.setNombre(publicacion.getClass().getName());
 		
 		ArrayList<Propiedad> listaPropiedades = new ArrayList<Propiedad>(Arrays.asList(
+				new Propiedad(TITULO, publicacion.getTitulo()),
 				new Propiedad(FECHA, dformat.format(publicacion.getFecha())),
 				new Propiedad(DESCRIPCION, publicacion.getDescripcion()),
 				new Propiedad(ME_GUSTA, Integer.toString(publicacion.getMeGusta()))
@@ -80,10 +81,11 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 	 * Método factoría que permite trabajar con instancias que hereden
 	 * de la clase Publicacion. Basta con que usen su constructor principal
 	 * 
+	 * @param titulo
 	 * @param Publicacion
 	 * @return
 	 */
-	protected abstract T crearInstancia(String descripcion);
+	protected abstract T crearInstancia(String titulo, String descripcion);
 	
 	/**
 	 * Crea una instancia nueva de Publicacion a partir de una entidad
@@ -97,10 +99,11 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 			return null;
 		
 		// Recuperamos atributos que no referencian a entidades
+		String titulo = serv.recuperarPropiedadEntidad(entidad, TITULO);
 		String descripcion = serv.recuperarPropiedadEntidad(entidad, DESCRIPCION);
 		
 		// Creamos la publicacion y le asignamos su identificador
-		T publicacion = crearInstancia(descripcion);
+		T publicacion = crearInstancia(titulo, descripcion);
 		publicacion.setId(entidad.getId());
 
 		// Lo registramos en el Pool
@@ -263,7 +266,7 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 		 *  que representan a publicaciones, tomando los identificadores de cada una
 		 *  El metodo get(id) ya maneja el Pool y no hay que preocuparse por el
 		 */
-		T aux = crearInstancia("");
+		T aux = crearInstancia("","");
 		return serv.recuperarEntidades(aux.getClass().getName()).stream()
 				.map(e -> e.getId())
 				.map(id -> get(id))

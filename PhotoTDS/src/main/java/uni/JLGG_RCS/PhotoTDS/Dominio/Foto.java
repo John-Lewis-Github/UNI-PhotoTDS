@@ -1,6 +1,5 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,16 +11,18 @@ import javax.imageio.ImageIO;
 public class Foto extends Publicacion {
 	
 	private String path;
-	private Image imagen;
-
-	public Foto(String descripcion, String path) {
-		super(descripcion);
-		this.path = path;
+	private BufferedImage imagen;
+	
+	public Foto(String titulo, String descripcion) {
+		super(titulo, descripcion);
+		this.path = null;
 		this.imagen = null;
 	}
 	
-	public Foto(String descripcion) {
-		this(descripcion, "");
+	public Foto(String titulo, String descripcion, String path) {
+		super(titulo, descripcion);
+		this.path = path;
+		this.imagen = null;
 	}
 	
 	public String getPath() {
@@ -32,7 +33,7 @@ public class Foto extends Publicacion {
 		this.path = path;
 	}
 	
-	public Image getImagen () {
+	public BufferedImage getImagen () {
 		// Se retrasa la creacion de la imagen hasta el ultimo momento
 		if (imagen == null)
 			try {

@@ -22,11 +22,11 @@ public class UsuarioTest {
 	private Usuario sec2 = new Usuario("Secundario 2", "S2", new Date(), "email", "password");
 	private Usuario sec3 = new Usuario("Secundario 3", "S3", new Date(), "email", "password");
 
-	private Foto fotoPerfil = new Foto("Foto de perfil", "/home/ruben/Firefox_wallpaper.png");
-	private Foto foto = new Foto("Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
-	private Album album = new Album("Este es un album de #Ejemplo");
-	private Foto f1 = new Foto("Mi primera foto de album #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
-	private Foto f2 = new Foto("Otra foto mas", "/home/ruben/Firefox_wallpaper.png");
+	private Foto fotoPerfil = new Foto("FotoPerfil", "Foto de perfil", "/home/ruben/Firefox_wallpaper.png");
+	private Foto foto = new Foto("Mi foto normal", "Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
+	private Album album = new Album("Mi primer album", "Este es un album de #Ejemplo");
+	private Foto f1 = new Foto("Mi primera foto", "Mi primera foto de album #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
+	private Foto f2 = new Foto("Mi segunda foto", "Otra foto mas", "/home/ruben/Firefox_wallpaper.png");
 	
 	
 	@Before

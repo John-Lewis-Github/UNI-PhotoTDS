@@ -13,9 +13,9 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
 
 public class AlbumTest {
 
-	private Album album = new Album("Este es un album de #Ejemplo");
-	private Foto f1 = new Foto("Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
-	private Foto f2 = new Foto("Otra foto mas", "/home/ruben/Firefox_wallpaper.png");
+	private Album album = new Album("Mi primer album", "Este es un album de #Ejemplo");
+	private Foto f1 = new Foto("Mi foto", "Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
+	private Foto f2 = new Foto("Mi segunda foto", "Otra foto mas", "/home/ruben/Firefox_wallpaper.png");
 	
 	@Before
 	public void setup() {

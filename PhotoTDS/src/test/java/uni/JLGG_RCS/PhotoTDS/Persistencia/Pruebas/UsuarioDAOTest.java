@@ -43,12 +43,12 @@ public class UsuarioDAOTest {
 		usDAO = factoria.getUsuarioDAO();
 
 		u = new Usuario("Pepito", "leTongue", new Date(), "letongue56@hotmail.es", "aaaa");
-		fotoPerfil = new Foto("Descripcion", "/home/ruben/Firefox_wallpaper.png");
+		fotoPerfil = new Foto("Titulo", "Descripcion", "/home/ruben/Firefox_wallpaper.png");
 		fotoPerfil.setUsuario(u);
 		u.addFoto(fotoPerfil);
 		u.setFotoPerfil(fotoPerfil);
 		
-		album = new Album("descripcion");
+		album = new Album("Titulo album", "descripcion");
 		album.setUsuario(u);
 		
 		Usuario u2 = new Usuario("Pepitoasdf", "leTongueasdf", new Date(), "letongue56@hotmail.es", "aaaa");
