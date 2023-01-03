@@ -1,8 +1,14 @@
 package uni.JLGG_RCS.PhotoTDS.Controlador;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+import umu.tds.fotos.ComponenteCargadorFotos;
+import umu.tds.fotos.Fotos;
+import umu.tds.fotos.FotosEvent;
+import umu.tds.fotos.FotosListener;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
 import uni.JLGG_RCS.PhotoTDS.Dominio.GeneradorExcel;
@@ -18,7 +24,7 @@ import uni.JLGG_RCS.PhotoTDS.Persistencia.FactoriaDAO;
 import uni.JLGG_RCS.PhotoTDS.Persistencia.PublicacionDAO;
 import uni.JLGG_RCS.PhotoTDS.Persistencia.UsuarioDAO;
 
-public enum Controlador {
+public enum Controlador implements FotosListener{
 	INSTANCE;
 	
 	private static final int MAX_PUBLICACIONES_USUARIO = 20;
@@ -34,6 +40,8 @@ public enum Controlador {
 	
 	private GeneradorExcel genExcel;
 	private GeneradorPDF genPDF;
+	
+	private ComponenteCargadorFotos cargador;
 	
 	private Usuario usuario;
 	
@@ -61,6 +69,9 @@ public enum Controlador {
 		
 		genExcel = GeneradorExcel.INSTANCE;
 		genPDF = GeneradorPDF.INSTANCE;
+		
+		cargador = ComponenteCargadorFotos.INSTANCE;
+		cargador.addFotosListener(this);
 	}
 	
 	/**
@@ -150,8 +161,12 @@ public enum Controlador {
 	 * @param path la ruta a la imagen
 	 */
 	public void publicarImagen(String comentario, String path) {
+		// Se obtiene el titulo de la foto como su nombre
+		Path nombreFichero = Paths.get(path).getFileName();
+		String titulo = nombreFichero.toString();
+		
 		// Se crea y registra la foto
-		Foto foto = new Foto(comentario, path);
+		Foto foto = new Foto(titulo, comentario, path);
 		pubRepo.addPublicacion(foto);
 		fotoDAO.create(foto);
 		
@@ -175,6 +190,11 @@ public enum Controlador {
 	public void generarPDF() {
 		if (usuario.isPremium())
 			genPDF.generarPDF(usuario);
+	}
+
+	@Override
+	public void notificaNuevasFotos(FotosEvent e) {
+		Fotos f = cargador.nuevasFotos();
 	}
 	
 }

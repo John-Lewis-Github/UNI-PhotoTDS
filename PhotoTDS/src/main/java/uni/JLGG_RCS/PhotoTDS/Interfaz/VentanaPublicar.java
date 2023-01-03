@@ -154,10 +154,7 @@ public class VentanaPublicar {
 			}
 
 		});
-		
-		
-		
-		
+
 		return panel;
 	}
 	
