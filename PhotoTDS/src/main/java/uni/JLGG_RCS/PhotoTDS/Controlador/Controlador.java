@@ -112,6 +112,17 @@ public enum Controlador implements FotosListener{
 	}
 	
 	/**
+	 * Devuelve el usuario que ha hecho login en la aplicacion. No tiene 
+	 * sentido llamar a esta funcion si no se ha logeado ningun usuario
+	 * todavia. 
+	 * 
+	 * @return el usuario logeado, o null si todavia no se ha logeado ninguno
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+	
+	/**
 	 * Devuelve una lista de hasta 20 publicaciones del usuario de la 
 	 * aplicacion o sus seguidores, ordenadas por fecha: las mas recientes
 	 * primero
