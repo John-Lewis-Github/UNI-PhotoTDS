@@ -69,36 +69,69 @@ public abstract class Publicacion implements Persistente {
 		this.id = id;
 	}
 	
+	/**
+	 * Getter del titulo
+	 * @return el titulo de la publicacion
+	 */
 	public String getTitulo() {
 		return titulo;
 	}
 
+	/**
+	 * Setter del titulo
+	 * @param titulo el nuevo titulo
+	 */
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
 
+	/**
+	 * Getter de la fecha
+	 * @return la fecha de la publicacion
+	 */
 	public Date getFecha() {
 		return fecha;
 	}
 	
+	/**
+	 * Setter de la fecha
+	 * @param fecha la nueva fecha
+	 */
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
 	
+	/**
+	 * Getter de la descripcion
+	 * @return la descripcion de la publicacion
+	 */
 	public String getDescripcion() {
 		return descripcion;
 	}
 
+	/**
+	 * Setter de la descripcion
+	 * @param descripcion la nueva descripcion
+	 */
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 		addHashtags(descripcion);
 	}
 
+	/**
+	 * Getter de los hashtags
+	 * @return los hashtags de la publicacion
+	 */
 	public List<Hashtag> getHashtags() {
 		return new LinkedList<Hashtag>(hashtags);
 	}
 
-	// Los hashtags se introducen como parte de un comentario
+	/**
+	 * Parsea un texto e incluye los hashtags que contiene en el conjunto
+	 * de hashtags de la publicacion
+	 * 
+	 * @param texto el texto a parsear
+	 */
 	private void addHashtags(String texto) {
 		List<String> palabras = Arrays.asList(texto.split(" "));
 		palabras.stream()
@@ -106,6 +139,12 @@ public abstract class Publicacion implements Persistente {
 				.forEach(s -> this.hashtags.add(repHashtags.getHashtag(s)));
 	}
 	
+	/** 
+	 * Incluye una coleccion de hashtags para la publicacion
+	 * Solo incluye los hashtags nuevos
+	 * 
+	 * @param hashtags los nuevos hashtags
+	 */
 	public void addHashtags(Collection<Hashtag> hashtags) {
 		String nuevosHashtags = hashtags.stream()
 			.filter(h -> this.hashtags.add(h))
