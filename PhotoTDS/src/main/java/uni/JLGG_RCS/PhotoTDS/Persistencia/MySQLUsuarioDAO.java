@@ -257,7 +257,7 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public void update(Usuario usuario) {
-		// Si el usuario estaba en la base de datos, se crea
+		// Si el usuario no estaba en la base de datos, se crea
 		if (usuario.getId() == null) {
 			create(usuario);
 			return;

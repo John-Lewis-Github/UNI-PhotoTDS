@@ -164,7 +164,11 @@ public enum MySQLNotificacionDAO implements NotificacionDAO {
 
 	@Override
 	public void update(Notificacion notificacion) {
-		// No hay nada que hacer, la notificacion es inmutable
+		// Si la notificacion no estaba en la base de datos, se crea
+		if (notificacion.getId() == null) {
+			create(notificacion);
+			return;
+		}	
 	}
 
 	@Override

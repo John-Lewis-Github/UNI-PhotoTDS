@@ -154,6 +154,12 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 
 	@Override
 	public void update(Comentario comentario) {
+		// Si el comentario no estaba en la base de datos, se crea
+		if (comentario.getId() == null) {
+			create(comentario);
+			return;
+		}
+		
 		// Se recupera la entidad asociada al usuario
 		Entidad entidad = serv.recuperarEntidad(comentario.getId());
 
@@ -171,7 +177,7 @@ public enum MySQLComentarioDAO implements ComentarioDAO {
 				if (comentador == null) {
 					p.setValor("");
 				} else {
-					fact.getUsuarioDAO().create(comentador);
+					fact.getUsuarioDAO().update(comentador);
 					p.setValor(Integer.toString(comentador.getId()));
 				}
 				break;

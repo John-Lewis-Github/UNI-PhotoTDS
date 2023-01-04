@@ -86,9 +86,9 @@ public class MySQLAlbumDAO extends MySQLPublicacionDAO<Album> {
 				.findFirst()
 				.orElseThrow();
 		
-		// Se incluye la cadena con identificadores de las fotos, previamente creadas
+		// Se incluye la cadena con identificadores de las fotos, previamente actualizadas
 		album.getFotos().stream()
-			.forEach(f -> fotoDAO.create(f));
+			.forEach(f -> fotoDAO.update(f));
 		fotos.setValor(Persistente.idList2String(album.getFotos()));
 		serv.modificarPropiedad(fotos);
 		pool.addObject(album.getId(), album);

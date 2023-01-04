@@ -203,6 +203,12 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 
 	@Override
 	public void update(T publicacion) {
+		// Si la publicacion no estaba en la base de datos, se crea
+		if (publicacion.getId() == null) {
+			create(publicacion);
+			return;
+		}
+		
 		// Se recupera la entidad asociada al usuario
 		Entidad entidad = serv.recuperarEntidad(publicacion.getId());
 
@@ -230,7 +236,6 @@ public abstract class MySQLPublicacionDAO<T extends Publicacion> implements Publ
 				if (usuario == null) {
 					p.setValor("");
 				} else {
-					fact.getUsuarioDAO().create(usuario);
 					p.setValor(Integer.toString(usuario.getId()));
 				}
 				break;
