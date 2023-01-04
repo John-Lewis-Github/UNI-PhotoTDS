@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.Dimension;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
@@ -31,15 +32,13 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
-public class VentanaRegistro {
+public class VentanaRegistro extends JFrame {
 
 	private static final int ANCHURA = 450;
 	private static final int ALTURA = 400;
 	private static final int MARGEN_HORIZONTAL = 10;
 	private static final int ANCHO_CHOOSER = 500;
 	private static final int ALTO_CHOOSER = 400;
-	private static final int ANCHO_PRESENTACION = 300;
-	private static final int ALTO_PRESENTACION = 300;
 	
 	private JDialog framePrincipal;
 	private JPanel contenedor;
@@ -115,10 +114,10 @@ public class VentanaRegistro {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		framePrincipal = new JDialog();
+		framePrincipal = new JDialog(this);
 		framePrincipal.setBounds(400, 50, ANCHURA, ALTURA);
 		framePrincipal.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		framePrincipal.setModal(true);
+		// framePrincipal.setModal(true);
 		
 		contenedor = new JPanel();
 		framePrincipal.setContentPane(contenedor);
@@ -236,32 +235,9 @@ public class VentanaRegistro {
 		
 		JButton botonPresentacion = new JButton("...");
 		botonPresentacion.addActionListener(e -> {
-			JDialog dialog = new JDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setSize(new Dimension(ANCHO_PRESENTACION, ALTO_PRESENTACION));
-			dialog.setLocationRelativeTo(panel);
-			dialog.setVisible(true);
-			dialog.setModal(true);
-			
-			JPanel panelDialogo = new JPanel();
-			panelDialogo.setLayout(new BoxLayout(panelDialogo, BoxLayout.Y_AXIS));
-			panelDialogo.setMinimumSize(new Dimension(ANCHO_PRESENTACION, ALTO_PRESENTACION));
-
-			dialog.setContentPane(panelDialogo);
-
-			JLabel indicacion = new JLabel("Escribe tu presentacion (maximo 200 caracteres): ");
-			panelDialogo.add(indicacion);
-					
-			JTextArea textArea = new JTextArea();
-			textArea.setBackground(Color.LIGHT_GRAY);
-			textArea.setText("...");
-			panelDialogo.add(textArea);
-			
-			JButton botonVolver = new JButton();
-			botonVolver.addActionListener(e2 -> {
-				dialog.dispose();
-			});
-			panelDialogo.add(botonVolver);
+			DialogoPresentacion dialogo = new DialogoPresentacion();
+			dialogo.setLocationRelativeTo(botonPresentacion);
+			dialogo.setVisible(true);
 		});
 		
 		panelPresentacion.add(botonPresentacion);
