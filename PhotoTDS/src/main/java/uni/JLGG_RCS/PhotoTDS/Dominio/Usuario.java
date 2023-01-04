@@ -1,5 +1,9 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +11,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.imageio.ImageIO;
 
 public class Usuario implements Persistente, NotificacionListener {
 	private static final int MAX_CARACTERES_PRESENTACION = 200;
@@ -20,7 +26,8 @@ public class Usuario implements Persistente, NotificacionListener {
 	
 	private String password;
 	private String presentacion;
-	private Foto fotoPerfil;
+	private Path path;
+	private Image fotoPerfil;
 	private boolean premium;
 	
 	private List<Usuario> seguidores;
@@ -41,8 +48,9 @@ public class Usuario implements Persistente, NotificacionListener {
 	 * @param fechaNacimiento la fecha de nacimiento.
 	 * @param email el email
 	 * @param password el password a usar
+	 * @param path la ruta de la foto de perfil
 	 */
-	public Usuario(String nombreCompleto, String nombreUsuario, Date fechaNacimiento, String email, String password) {
+	public Usuario(String nombreCompleto, String nombreUsuario, Date fechaNacimiento, String email, String password, String path) {
 		
 		if ((nombreCompleto == null) || (nombreCompleto.equals("")))
 			throw new IllegalArgumentException();		
@@ -67,9 +75,8 @@ public class Usuario implements Persistente, NotificacionListener {
 		// La presentacion es opcional
 		this.presentacion = "";
 		
-		// Podemos no tener foto de perfil
-		this.fotoPerfil = null;
-		
+		this.path = Path.of(path);
+				
 		// Por defecto los usuarios no seran premium
 		this.premium = false;
 				
@@ -81,6 +88,22 @@ public class Usuario implements Persistente, NotificacionListener {
 		
 		// Se define directamente el descuento
 		descuento = new DescuentoEdad(this);
+	}
+	
+	/**
+	 * Constructor principal de usuarios. Todos los atributos que recibe
+	 * deben ser distintos de null, y los atributos de tipo String deben
+	 * ser distintos de "". Con este constructor no se establece una foto
+	 * de perfil
+	 * 
+	 * @param nombreCompleto el nombre completo
+	 * @param nombreUsuario el nombre del usuario
+	 * @param fechaNacimiento la fecha de nacimiento.
+	 * @param email el email
+	 * @param password el password a usar
+	 */
+	public Usuario(String nombreCompleto, String nombreUsuario, Date fechaNacimiento, String email, String password) {
+		this(nombreCompleto, nombreUsuario, fechaNacimiento, email, password, "");
 	}
 	
 	@Override
@@ -181,17 +204,46 @@ public class Usuario implements Persistente, NotificacionListener {
 	 * 
 	 * @return la foto de perfil del usuario
 	 */
-	public Foto getFotoPerfil() {
+	public Image getFotoPerfil() {
+		// Si no hay foto de perfil, se devuelve null
+		if (path.toString().equals(""))
+			return null;
+		
+		// Se genera la foto en el ultimo momento
+		if (fotoPerfil == null) 
+			try {
+				fotoPerfil = ImageIO.read(new File(path.toString()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return fotoPerfil;
 	}
 
 	/**
 	 * Setter de la foto de perfil
 	 * 
-	 * @param foto la nueva foto de perfil del usuario
+	 * @param path la ruta a la nueva foto de perfil del usuario
 	 */
-	public void setFotoPerfil(Foto foto) {
-		this.fotoPerfil = foto;
+	public void setPath(String path) {
+		this.path = Path.of(path);
+		// Si habia foto hay que cambiarla
+		if (fotoPerfil != null) 
+			try {
+				fotoPerfil = ImageIO.read(new File(path));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	/**
+	 * Getter de la ruta a la foto de perfil del usuario
+	 * 
+	 * @return una cadena con la ruta
+	 */
+	public String getPath() {
+		return path.toString();
 	}
 	
 	/**
@@ -367,6 +419,7 @@ public class Usuario implements Persistente, NotificacionListener {
 	 */
 	public void publicarFoto(Foto foto) {
 		addFoto(foto);
+		foto.setUsuario(this);
 		Notificacion nueva = new Notificacion(foto);
 		for (Usuario s : seguidores)
 			s.avisarNotificacion(nueva);
@@ -379,6 +432,7 @@ public class Usuario implements Persistente, NotificacionListener {
 	 */
 	public void publicarAlbum(Album album) {
 		addAlbum(album);
+		album.setUsuario(this);
 		Notificacion nueva = new Notificacion(album);
 		for (Usuario s : seguidores)
 			s.avisarNotificacion(nueva);

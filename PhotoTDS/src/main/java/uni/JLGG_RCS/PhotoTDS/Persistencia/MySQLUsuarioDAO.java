@@ -42,7 +42,7 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 	private static final String EMAIL = "email";
 	private static final String PRESENTACION = "presentacion";
 	private static final String PASSWORD = "password";
-	private static final String FOTO_PERFIL = "fotoPerfil";
+	private static final String PATH_FOTO_PERFIL = "path";
 	private static final String PREMIUM = "premium";
 	private static final String SEGUIDORES = "seguidores";
 	private static final String FOTOS = "fotos";
@@ -93,6 +93,7 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 				new Propiedad(FECHA, dateString),
 				new Propiedad(EMAIL, usuario.getEmail()),
 				new Propiedad(PASSWORD, usuario.getPassword()),
+				new Propiedad(PATH_FOTO_PERFIL, usuario.getPath()),
 				new Propiedad(PRESENTACION, usuario.getPresentacion()),
 				new Propiedad(PREMIUM, Boolean.toString(usuario.isPremium()))
 				));
@@ -124,9 +125,10 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 		}
 		String email = serv.recuperarPropiedadEntidad(entidad, EMAIL);
 		String password = serv.recuperarPropiedadEntidad(entidad, PASSWORD);
+		String path = serv.recuperarPropiedadEntidad(entidad, PATH_FOTO_PERFIL);
 		
 		// Creamos el usuario y le asignamos su identificador
-		Usuario usuario = new Usuario(nombreCompleto, nombreUsuario, fecha, email, password);
+		Usuario usuario = new Usuario(nombreCompleto, nombreUsuario, fecha, email, password, path);
 		usuario.setId(entidad.getId());
 
 		// Lo registramos en el Pool
@@ -136,18 +138,12 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 		// problemas con las referencias bidireccionales
 		
 		String presentacion = serv.recuperarPropiedadEntidad(entidad, PRESENTACION);
-
-		String fotoPerfilId = serv.recuperarPropiedadEntidad(entidad, FOTO_PERFIL);
-		Foto fotoPerfil = null;
-		if (fotoPerfilId != "")
-			fotoPerfil = fact.getFotoDAO().get(Integer.parseInt(fotoPerfilId));
 		
 		String premiumStr = serv.recuperarPropiedadEntidad(entidad, PREMIUM);
 		boolean premium = Boolean.parseBoolean(premiumStr);
 		
 		usuario.setPassword(password);
 		usuario.setPresentacion(presentacion);
-		usuario.setFotoPerfil(fotoPerfil);
 		usuario.setPremium(premium);
 		
 		// Se transforman las listas de identificadores enteros a listas de atributos
@@ -198,16 +194,6 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 		
 		// Incluyo en la lista los objetos persistentes referenciados
 		List<Propiedad> listaPropiedades = entidad.getPropiedades();
-				
-		// Foto de perfil
-		Foto fotoPerfil = usuario.getFotoPerfil();
-		if (fotoPerfil != null) {
-			fact.getFotoDAO().create(fotoPerfil);
-			String fotoPerfilId = Integer.toString(fotoPerfil.getId());
-			listaPropiedades.add(new Propiedad(FOTO_PERFIL, fotoPerfilId));
-		} else {
-			listaPropiedades.add(new Propiedad(FOTO_PERFIL, ""));
-		}
 		
 		// Seguidores
 		usuario.getSeguidores().stream()
@@ -256,15 +242,14 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 		usuario.setId(null);
 		
 		// Actualizo esta informacion
-		fact.getFotoDAO().update(usuario.getFotoPerfil());
-			usuario.getSeguidores().stream()
-				.forEach(s -> update(s));
-			usuario.getFotos().stream()
-				.forEach(f -> fact.getFotoDAO().update(f));
-			usuario.getAlbumes().stream()
-				.forEach(a -> fact.getAlbumDAO().update(a));
-			usuario.getNotificaciones()
-				.forEach(n -> fact.getNotificacionDAO().update(n));
+		usuario.getSeguidores().stream()
+			.forEach(s -> update(s));
+		usuario.getFotos().stream()
+			.forEach(f -> fact.getFotoDAO().update(f));
+		usuario.getAlbumes().stream()
+			.forEach(a -> fact.getAlbumDAO().update(a));
+		usuario.getNotificaciones()
+			.forEach(n -> fact.getNotificacionDAO().update(n));
 		
 		// Devolvera true
 		return serv.borrarEntidad(entidad);
@@ -272,6 +257,12 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public void update(Usuario usuario) {
+		// Si el usuario estaba en la base de datos, se crea
+		if (usuario.getId() == null) {
+			create(usuario);
+			return;
+		}
+			
 		// Se recupera la entidad asociada al usuario
 		Entidad entidad = serv.recuperarEntidad(usuario.getId());
 
@@ -296,15 +287,8 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 			case PASSWORD:
 				p.setValor(usuario.getPassword());
 				break;
-			case FOTO_PERFIL:
-				// Hay que asegurarse de guardar los cambios
-				Foto fotoPerfil = usuario.getFotoPerfil();
-				if (fotoPerfil == null) {
-					p.setValor("");
-				} else {
-					fact.getFotoDAO().create(fotoPerfil);
-					p.setValor(Integer.toString(fotoPerfil.getId()));
-				}
+			case PATH_FOTO_PERFIL:
+				p.setValor(usuario.getPath());
 				break;
 			case PREMIUM:
 				p.setValor(Boolean.toString(usuario.isPremium()));
@@ -312,25 +296,25 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 			case SEGUIDORES: 
 				// Hay que asegurarse de almacenar los cambios
 				usuario.getSeguidores().stream()
-					.forEach(u -> create(u));
+					.forEach(u -> update(u));
 				p.setValor(Persistente.idList2String(usuario.getSeguidores()));
 				break;
 			case FOTOS:
 				// Hay que asegurarse de almacenar los cambios
 				usuario.getFotos().stream()
-					.forEach(f -> fact.getFotoDAO().create(f));
+					.forEach(f -> fact.getFotoDAO().update(f));
 				p.setValor(Persistente.idList2String(usuario.getFotos()));
 				break;
 			case ALBUMES:
 				// Hay que asegurarse de almacenar los cambios
 				usuario.getAlbumes().stream()
-					.forEach(a -> fact.getAlbumDAO().create(a));
+					.forEach(a -> fact.getAlbumDAO().update(a));
 				p.setValor(Persistente.idList2String(usuario.getAlbumes()));
 				break;
 			case NOTIFICACIONES:
 				// Hay que asegurarse de almacenar los cambios
 				usuario.getNotificaciones().stream()
-					.forEach(n -> fact.getNotificacionDAO().create(n));
+					.forEach(n -> fact.getNotificacionDAO().update(n));
 				p.setValor(Persistente.idList2String(usuario.getNotificaciones()));
 				break;
 			default:
@@ -341,7 +325,6 @@ public class MySQLUsuarioDAO implements UsuarioDAO {
 		
 		// Se reemplaza el objeto en el pool
 		pool.addObject(usuario.getId(), usuario);
-		
 	}
 
 	@Override

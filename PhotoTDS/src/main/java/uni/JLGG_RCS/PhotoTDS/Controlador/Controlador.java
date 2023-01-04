@@ -193,8 +193,7 @@ public enum Controlador implements FotosListener{
 	}
 	
 	public Image getImagenUsuario(Usuario usuario) {
-		Foto fotoPerfil = usuario.getFotoPerfil();
-		Image imagen = fotoPerfil.getImagen();
+		Image imagen = usuario.getFotoPerfil();
 		if (imagen == null)
 			try {
 				imagen = ImageIO.read(this.getClass().getResource(RUTA_DEFAULT_PROF_PIC));

@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Notificacion;
 import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
 
@@ -22,7 +21,6 @@ public class UsuarioTest {
 	private Usuario sec2 = new Usuario("Secundario 2", "S2", new Date(), "email", "password");
 	private Usuario sec3 = new Usuario("Secundario 3", "S3", new Date(), "email", "password");
 
-	private Foto fotoPerfil = new Foto("FotoPerfil", "Foto de perfil", "/home/ruben/Firefox_wallpaper.png");
 	private Foto foto = new Foto("Mi foto normal", "Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
 	private Album album = new Album("Mi primer album", "Este es un album de #Ejemplo");
 	private Foto f1 = new Foto("Mi primera foto", "Mi primera foto de album #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
@@ -32,7 +30,6 @@ public class UsuarioTest {
 	@Before
 	public void setup() {
 		principal.addSeguidores(Arrays.asList(sec1, sec2, sec3));
-		principal.setFotoPerfil(foto);
 	}
 	
 	@Test
@@ -62,24 +59,6 @@ public class UsuarioTest {
 		if ((!l.equals(l2)) || (!l.equals(l3))) {
 			fail("Las tres listas deben ser iguales");
 		}
-	}
-	
-	@Test
-	public void testUnicidadHashtags() {
-		List<Hashtag> l1 = foto.getHashtags();
-		List<Hashtag> l2 = f1.getHashtags();
-
-		Hashtag h1 = l1.get(0);
-		Hashtag h2 = l2.get(0);
-		
-		if (h1 != h2)
-			fail("Los hashtags deben ser el mismo objeto");
-		
-		h1 = l1.get(1);
-		h2 = l2.get(1);
-		
-		if (h1 != h2)
-			fail("Los hashtags deben ser el mismo objeto");
 	}
 
 }

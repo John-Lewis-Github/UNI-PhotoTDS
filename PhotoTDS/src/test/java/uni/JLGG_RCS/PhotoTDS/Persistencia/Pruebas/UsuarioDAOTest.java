@@ -26,7 +26,7 @@ public class UsuarioDAOTest {
 	private UsuarioDAO usDAO;
 
 	private Usuario u;
-	private Foto fotoPerfil;
+	private Foto foto;
 	private Album album;
 	private Notificacion noti;
 	
@@ -42,14 +42,12 @@ public class UsuarioDAOTest {
 		
 		usDAO = factoria.getUsuarioDAO();
 
-		u = new Usuario("Pepito", "leTongue", new Date(), "letongue56@hotmail.es", "aaaa");
-		fotoPerfil = new Foto("Titulo", "Descripcion", "/home/ruben/Firefox_wallpaper.png");
-		fotoPerfil.setUsuario(u);
-		u.addFoto(fotoPerfil);
-		u.setFotoPerfil(fotoPerfil);
+		u = new Usuario("Pepito", "leTongue", new Date(), "letongue56@hotmail.es", "aaaa", "./resources/default_user_pic.png");
+		foto = new Foto("Titulo", "Descripcion", "/home/ruben/Firefox_wallpaper.png");
+		u.publicarFoto(foto);
 		
 		album = new Album("Titulo album", "descripcion");
-		album.setUsuario(u);
+		u.publicarAlbum(album);
 		
 		Usuario u2 = new Usuario("Pepitoasdf", "leTongueasdf", new Date(), "letongue56@hotmail.es", "aaaa");
 		
@@ -57,10 +55,8 @@ public class UsuarioDAOTest {
 		foto2.setUsuario(u2);
 		noti = new Notificacion(foto2);
 				
-		album.addFoto(fotoPerfil);
-		
-		u.setFotoPerfil(fotoPerfil);
-		
+		album.addFoto(foto);
+				
 		u.setPresentacion("hola buenas vengo a probar un DAO");
 		u.setPremium(true);
 		u.addAlbum(album);

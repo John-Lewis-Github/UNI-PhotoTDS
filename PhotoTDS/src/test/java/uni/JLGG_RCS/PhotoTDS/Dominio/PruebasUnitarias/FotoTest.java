@@ -19,7 +19,7 @@ import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
 public class FotoTest {
 
 	private Foto f = new Foto("Mi foto", "Mi primera foto #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
-
+	private Foto f2 = new Foto("Foto espejo", "La foto de antes #Prueba #Test", "/home/ruben/Firefox_wallpaper.png");
 	@Test
 	public void testHashtags() {		
 		List<Hashtag> l = f.getHashtags();
@@ -69,5 +69,23 @@ public class FotoTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testUnicidadHashtags() {
+		List<Hashtag> l1 = f.getHashtags();
+		List<Hashtag> l2 = f2.getHashtags();
+
+		Hashtag h1 = l1.get(0);
+		Hashtag h2 = l2.get(0);
+		
+		if (h1 != h2)
+			fail("Los hashtags deben ser el mismo objeto");
+		
+		h1 = l1.get(1);
+		h2 = l2.get(1);
+		
+		if (h1 != h2)
+			fail("Los hashtags deben ser el mismo objeto");
 	}
 }

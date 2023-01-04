@@ -1,8 +1,5 @@
 package uni.JLGG_RCS.PhotoTDS.Dominio.PruebasIntegracion;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
 import java.util.Date;
 
 import org.junit.Test;

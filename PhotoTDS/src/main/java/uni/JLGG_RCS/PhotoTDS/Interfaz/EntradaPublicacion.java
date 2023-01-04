@@ -116,7 +116,7 @@ public class EntradaPublicacion extends JPanel {
 		
 		//metemos la foto del usuario que ha subido la publicacion
 		JLabel lblFotoUsuario = new JLabel();
-		Image imagenUsuario = publicacion.getUsuario().getFotoPerfil().getImagen();
+		Image imagenUsuario = Controlador.INSTANCE.getImagenUsuario(publicacion);
 		ImageIcon iconoImagenUsuario = new ImageIcon(imagenUsuario.getScaledInstance(ancho/6, alto, 0));
 		lblFotoUsuario.setIcon(iconoImagenUsuario);
 		fixSize(lblFotoUsuario,ancho/6,alto);
