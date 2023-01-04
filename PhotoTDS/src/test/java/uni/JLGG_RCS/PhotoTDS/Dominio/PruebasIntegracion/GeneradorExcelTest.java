@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.GeneradorExcel;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
+import uni.jlgg_rcs.phototds.dominio.GeneradorExcel;
+import uni.jlgg_rcs.phototds.dominio.Usuario;
 
 public class GeneradorExcelTest {
 

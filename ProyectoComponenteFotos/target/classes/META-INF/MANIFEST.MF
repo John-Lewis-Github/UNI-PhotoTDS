@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Built-By: ruben
+Build-Jdk: 17.0.3
+Created-By: Maven Integration for Eclipse
+Name: umu/tds/componente/ComponenteCargadorFotos.class
+

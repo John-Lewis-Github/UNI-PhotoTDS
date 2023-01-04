@@ -7,9 +7,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
+import uni.jlgg_rcs.phototds.dominio.Album;
+import uni.jlgg_rcs.phototds.dominio.Foto;
+import uni.jlgg_rcs.phototds.dominio.Hashtag;
 
 public class AlbumTest {
 

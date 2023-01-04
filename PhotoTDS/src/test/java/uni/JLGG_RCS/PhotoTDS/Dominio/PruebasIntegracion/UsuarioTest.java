@@ -9,10 +9,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Notificacion;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
+import uni.jlgg_rcs.phototds.dominio.Album;
+import uni.jlgg_rcs.phototds.dominio.Foto;
+import uni.jlgg_rcs.phototds.dominio.Notificacion;
+import uni.jlgg_rcs.phototds.dominio.Usuario;
 
 public class UsuarioTest {
 	

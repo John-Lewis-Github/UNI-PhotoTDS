@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
+import uni.jlgg_rcs.phototds.dominio.Usuario;
 
 public class UsuarioTest {
 

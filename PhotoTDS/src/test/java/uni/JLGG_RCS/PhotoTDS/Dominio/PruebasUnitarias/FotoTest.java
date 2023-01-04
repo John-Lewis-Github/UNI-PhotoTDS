@@ -13,8 +13,8 @@ import javax.swing.WindowConstants;
 
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Hashtag;
+import uni.jlgg_rcs.phototds.dominio.Foto;
+import uni.jlgg_rcs.phototds.dominio.Hashtag;
 
 public class FotoTest {
 

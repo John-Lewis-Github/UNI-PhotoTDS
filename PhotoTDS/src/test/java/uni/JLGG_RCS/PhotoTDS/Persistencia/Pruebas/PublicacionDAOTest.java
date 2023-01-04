@@ -7,15 +7,15 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.Album;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Foto;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Notificacion;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
-import uni.JLGG_RCS.PhotoTDS.Persistencia.DAOException;
-import uni.JLGG_RCS.PhotoTDS.Persistencia.FactoriaDAO;
-import uni.JLGG_RCS.PhotoTDS.Persistencia.MySQLFactoriaDAO;
-import uni.JLGG_RCS.PhotoTDS.Persistencia.PublicacionDAO;
-import uni.JLGG_RCS.PhotoTDS.Persistencia.UsuarioDAO;
+import uni.jlgg_rcs.phototds.dominio.Album;
+import uni.jlgg_rcs.phototds.dominio.Foto;
+import uni.jlgg_rcs.phototds.dominio.Notificacion;
+import uni.jlgg_rcs.phototds.dominio.Usuario;
+import uni.jlgg_rcs.phototds.persistencia.DAOException;
+import uni.jlgg_rcs.phototds.persistencia.FactoriaDAO;
+import uni.jlgg_rcs.phototds.persistencia.MySQLFactoriaDAO;
+import uni.jlgg_rcs.phototds.persistencia.PublicacionDAO;
+import uni.jlgg_rcs.phototds.persistencia.UsuarioDAO;
 
 public class PublicacionDAOTest {
 

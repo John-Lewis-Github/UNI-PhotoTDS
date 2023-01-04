@@ -4,8 +4,8 @@ import java.util.Date;
 
 import org.junit.Test;
 
-import uni.JLGG_RCS.PhotoTDS.Dominio.GeneradorPDF;
-import uni.JLGG_RCS.PhotoTDS.Dominio.Usuario;
+import uni.jlgg_rcs.phototds.dominio.GeneradorPDF;
+import uni.jlgg_rcs.phototds.dominio.Usuario;
 
 public class GeneradorPDFTest {
 
