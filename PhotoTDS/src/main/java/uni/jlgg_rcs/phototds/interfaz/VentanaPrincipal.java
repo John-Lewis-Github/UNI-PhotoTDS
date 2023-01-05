@@ -98,7 +98,7 @@ public class VentanaPrincipal {
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setBackground(Color.blue);
 		fixSize(panel, ANCHURA, ALTURA_PANEL_PUBLICACIONES);
-		/*List<Publicacion> listaPublicaciones = Controlador.INSTANCE.getListaPrincipalUsuario();
+		List<Publicacion> listaPublicaciones = Controlador.INSTANCE.getListaPrincipalUsuario();
 		
 		// Lista publicaciones
 		JList<EntradaPublicacion> lista=new JList<EntradaPublicacion>();
@@ -114,7 +114,7 @@ public class VentanaPrincipal {
 		fixSize(scroll, ANCHURA, ALTURA_PANEL_PUBLICACIONES);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
-		panel.add(scroll);*/
+		panel.add(scroll);
 		
 		return panel;
 	}
