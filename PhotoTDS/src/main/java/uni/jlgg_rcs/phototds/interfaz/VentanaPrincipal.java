@@ -40,6 +40,8 @@ public class VentanaPrincipal {
 	private static final int ALTURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO = ALTURA_PANEL_FOTOS_Y_ALBUMES_USUARIO/12;
 	private static final int ANCHURA_MATRIZ_FOTOS = ANCHURA;
 	private static final int ALTURA_MATRIZ_FOTOS = ALTURA_PANEL_FOTOS_Y_ALBUMES_USUARIO - ALTURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO;
+	private static final int ANCHURA_ICONO = 70;
+	private static final int ALTURA_ICONO = 70;
 	
 	private JFrame frame;
 	private JPanel contenedor;
@@ -191,8 +193,9 @@ public class VentanaPrincipal {
 		/*TODO cambiar este JButton, y el JLabel siguiente por una foto 
 		 * del usuario inscrita en un círculo.
 		 * */
-		JButton botonFotoUsuario = new JButton("foto");
-		botonFotoUsuario.setFont(new Font("Arial", Font.PLAIN, 20));
+		JButton botonFotoUsuario = new JButton();
+		Image iconoUsuario = Controlador.INSTANCE.getImagenUsuario(usuarioLogeado).getScaledInstance(ANCHURA_ICONO, ALTURA_ICONO, 0);
+		botonFotoUsuario.setIcon(new ImageIcon(iconoUsuario));
 		botonFotoUsuario.setFocusPainted(false);
 		botonFotoUsuario.setBackground(Color.WHITE);
 		botonFotoUsuario.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
@@ -386,23 +389,22 @@ public class VentanaPrincipal {
 		/*Ponemos la matriz de fotos */
 		
 		JScrollPane scrollFotos = new JScrollPane();
-		scrollFotos.setBackground(Color.green);
-		// scrollFotos.setBackground(Color.WHITE);
+		scrollFotos.setBackground(Color.WHITE);
 		panelMatrizFotos.add(scrollFotos);
-		listaFotos = new JList<Image>();
-		// TODO funcion que te devuelva la lista de imagenes que ha publicado un usuario
-		// listaFotos = Controlador.INSTANCE.getListaImagenesUsuario();
 		List<Image> listaImagenes = Controlador.INSTANCE.getListaImagenesUsuario(usuarioLogeado);
 		fotosListModel = new DefaultListModel<Image>();
 		fotosListModel.addAll(listaImagenes);
+		listaFotos = new JList<Image>();
 		listaFotos.setModel(fotosListModel);
 		listaFotos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listaFotos.setVisibleRowCount(-1);
 		listaFotos.ensureIndexIsVisible(panelMatrizFotos.getHeight());
-		listaFotos.setCellRenderer(new EntradaPublicacionListRenderer());
+		listaFotos.setCellRenderer(new FotoListRenderer());
+		
 		fixSize(scrollFotos, ANCHURA_MATRIZ_FOTOS, ALTURA_MATRIZ_FOTOS);
 		scrollFotos.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollFotos.setViewportView(listaFotos);
+		scrollFotos.setVisible(true);
 		
 		/**Metemos un Mouse Listener para sacar un PopUp Menu cuando se hace click
 		 * izquierdo sobre una foto
