@@ -219,6 +219,7 @@ public class VentanaPrincipal {
 		botonFotoUsuario.addActionListener(e -> {
 			/** al hacer click sobre la foto del usuario en el menu, cambiamos al perfil del usuario **/
 			vistaPerfil = true;
+			usuarioSeleccionado = usuarioLogeado;
 			
 			panelPerfilUsuario = crearPanelUsuario();
 			panelPublicaciones.setVisible(false);
@@ -313,7 +314,7 @@ public class VentanaPrincipal {
 		panelNombreYBoton.setLayout(new FlowLayout(FlowLayout.LEFT));
 		fixSize(panelNombreYBoton, ANCHURA_INFO_USUARIO, ALTURA_PANEL_INFO_USUARIO/3);
 		
-		JLabel lblNombreUsuario = new JLabel("jesus.gmolina");
+		JLabel lblNombreUsuario = new JLabel(usuarioSeleccionado.getNombreUsuario());
 		lblNombreUsuario.setFont(new Font("Dialog", Font.PLAIN, 20));
 		
 		JButton botonEditarPerfil = new JButton("\bEditar Perfil\b");
@@ -336,13 +337,16 @@ public class VentanaPrincipal {
 		panelPublicacionesSeguidoresYSeguidos.setLayout(new FlowLayout(FlowLayout.LEFT));
 		fixSize(panelPublicacionesSeguidoresYSeguidos, ANCHURA_INFO_USUARIO, ALTURA_PANEL_INFO_USUARIO/3);
 		
-		JLabel lblPublicaciones = new JLabel("13 publicaciones");
+		String nPublicaciones = Integer.toString(Controlador.INSTANCE.getNPublicaciones(usuarioSeleccionado));
+		JLabel lblPublicaciones = new JLabel(nPublicaciones+" publicaciones");
 		lblPublicaciones.setFont(new Font("Dialog", Font.PLAIN, 17));
 		
-		JLabel lblSeguidores = new JLabel("7 seguidores");
+		String nSeguidores = Integer.toString(Controlador.INSTANCE.getNSeguidores(usuarioSeleccionado));
+		JLabel lblSeguidores = new JLabel(nSeguidores + " seguidores");
 		lblSeguidores.setFont(new Font("Dialog", Font.PLAIN, 17));
 		
-		JLabel lblSeguidos = new JLabel("7 seguidos");
+		String nSeguidos = Integer.toString(Controlador.INSTANCE.getNSeguidos(usuarioSeleccionado));
+		JLabel lblSeguidos = new JLabel(nSeguidos + " seguidos");
 		lblSeguidos.setFont(new Font("Dialog", Font.PLAIN, 17));
 		
 		
@@ -351,7 +355,7 @@ public class VentanaPrincipal {
 		panelNombreCompleto.setLayout(new FlowLayout(FlowLayout.LEFT));
 		fixSize(panelNombreCompleto, ANCHURA_INFO_USUARIO, ALTURA_PANEL_INFO_USUARIO/3);
 		
-		JLabel lblNombreCompleto = new JLabel("Jesús García Molina");
+		JLabel lblNombreCompleto = new JLabel(usuarioSeleccionado.getNombreCompleto());
 		lblNombreCompleto.setFont(new Font("Dialog", Font.PLAIN, 17));
 		
 		/** Ahora metemos el panel con las fotos y los albumes **/

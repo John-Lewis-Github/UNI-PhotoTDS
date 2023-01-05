@@ -84,4 +84,10 @@ public enum RepositorioUsuarios {
 		else
 			return null;
 	}
+
+	public int getNSeguidos(Usuario usuarioSeleccionado) {
+		return (int) usuarios.values().stream()
+				.filter(u -> u.getSeguidores().contains(usuarioSeleccionado))
+				.count();
+	}
 }

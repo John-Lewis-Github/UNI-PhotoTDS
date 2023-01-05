@@ -34,7 +34,7 @@ public enum Controlador implements FotosListener{
 	INSTANCE;
 	
 	private static final int MAX_PUBLICACIONES_USUARIO = 20;
-	 private static final String RUTA_DEFAULT_PROF_PIC = "/default_user_pic.png";
+	 private static final String RUTA_DEFAULT_PROF_PIC = "/resources/default_user_pic.png";
 
 	
 	private FactoriaDAO fact;
@@ -293,6 +293,33 @@ public enum Controlador implements FotosListener{
 				.stream()
 				.map(f -> f.getImagen())
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Devuelve el numero total de publicaciones de un usuario
+	 * @param usuarioSeleccionado el usuario del que obtener dicho numero
+	 * @return el numero de publicaciones del usuario
+	 */
+	public int getNPublicaciones(Usuario usuarioSeleccionado) {
+		return usuarioSeleccionado.getNPublicaciones();
+	}
+
+	/**
+	 * Devuelve el numero total de seguidores de un usuario
+	 * @param usuarioSeleccionado el usuario del que obtener dicho numero
+	 * @return el numero de seguidores del usuario
+	 */
+	public int getNSeguidores(Usuario usuarioSeleccionado) {
+		return usuarioSeleccionado.getNSeguidores();
+	}
+
+	/**
+	 * Devuelve el numero total de seguidores de un usuario
+	 * @param usuarioSeleccionado el usuario del que obtener dicho numero
+	 * @return el numero de seguidores del usuario
+	 */
+	public int getNSeguidos(Usuario usuarioSeleccionado) {
+		return usRepo.getNSeguidos(usuarioSeleccionado);
 	}
 	
 }

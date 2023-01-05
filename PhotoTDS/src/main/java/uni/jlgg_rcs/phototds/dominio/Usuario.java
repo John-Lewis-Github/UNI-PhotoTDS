@@ -206,7 +206,7 @@ public class Usuario implements Persistente, NotificacionListener {
 	 */
 	public Image getFotoPerfil() {
 		// Si no hay foto de perfil, se devuelve null
-		if (path.toString().equals(""))
+		if ((path == null) || (path.toString().equals("")))
 			return null;
 		
 		// Se genera la foto en el ultimo momento
@@ -471,6 +471,22 @@ public class Usuario implements Persistente, NotificacionListener {
 			return false;
 		Usuario other = (Usuario) obj;
 		return Objects.equals(nombreUsuario, other.nombreUsuario);
+	}
+
+	/**
+	 * Devuelve el numero total de publicaciones del usuario
+	 * @return el numero total de publicaciones
+	 */
+	public int getNPublicaciones() {
+		return fotos.size() + albumes.size();
+	}
+
+	/**
+	 * Devuelve el numero total de seguidores
+	 * @return el numero total de seguidores
+	 */
+	public int getNSeguidores() {
+		return seguidores.size();
 	}
 	
 	

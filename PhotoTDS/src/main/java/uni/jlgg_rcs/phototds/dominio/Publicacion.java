@@ -45,7 +45,7 @@ public abstract class Publicacion implements Persistente {
 		
 		this.fecha = new Date();
 		
-		if ((descripcion == null) || (descripcion.equals("")))
+		if (descripcion == null)
 			throw new IllegalArgumentException();
 		this.descripcion = descripcion;
 		
@@ -133,6 +133,9 @@ public abstract class Publicacion implements Persistente {
 	 * @param texto el texto a parsear
 	 */
 	private void addHashtags(String texto) {
+		if ((texto == null) || texto.equals(""))
+			return;
+		
 		List<String> palabras = Arrays.asList(texto.split(" "));
 		palabras.stream()
 				.filter(s -> (s.charAt(0) == '#'))
