@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import uni.jlgg_rcs.phototds.persistencia.DAOException;
 import uni.jlgg_rcs.phototds.persistencia.FactoriaDAO;
@@ -53,13 +54,13 @@ public enum RepositorioUsuarios {
 		List<Usuario> porNombreUsuario = usuarios.keySet().stream()
 				.filter(s -> s.toLowerCase().contains(minuscula))
 				.map(s -> usuarios.get(s))
-				.toList();
+				.collect(Collectors.toList());
 		List<Usuario> porNombreCompleto = usuarios.values().stream()
 				.filter(u -> u.getNombreCompleto().toLowerCase().contains(minuscula))
-				.toList();
+				.collect(Collectors.toList());
 		List<Usuario> porEmail = usuarios.values().stream()
 				.filter(u -> u.getEmail().toLowerCase().contains(minuscula))
-				.toList();
+				.collect(Collectors.toList());
 		
 		List<Usuario> listaUsuarios = new LinkedList<Usuario>();
 		listaUsuarios.addAll(porNombreCompleto);
@@ -78,7 +79,7 @@ public enum RepositorioUsuarios {
 	 */
 	public Usuario recuperarUsuario(String nombreUsuario, String password) {
 		Usuario usuario = usuarios.get(nombreUsuario);
-		if (password.equals(usuario.getPassword()))
+		if ((usuario != null) && (password.equals(usuario.getPassword())))
 			return usuario;
 		else
 			return null;

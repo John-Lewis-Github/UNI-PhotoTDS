@@ -2,6 +2,7 @@ package uni.jlgg_rcs.phototds.interfaz;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -17,16 +18,20 @@ public class FotoListRenderer extends DefaultListCellRenderer{
 	public Component getListCellRendererComponent(JList<?> list, 
 						Object value, int index, boolean isSelected, 
 						boolean cellHasFocus) {
-		Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		Component c = super.getListCellRendererComponent(
+				list, value, index, isSelected, cellHasFocus);
+		
 		if (c instanceof JLabel) {
 			JLabel lbl = (JLabel) c;
-			Foto f =(Foto) value;
-			lbl.setIcon(new ImageIcon(f.getImagen()));
+			Image i= (Image) value;
 			if (isSelected) {
-				VentanaVerFoto verFoto = new VentanaVerFoto(f);
-				verFoto.setVisible(true);
-	        } 
+				VentanaVerFoto v = new VentanaVerFoto(i);
+	        }
+			lbl.setIcon(new ImageIcon(i));
+			lbl.setVisible(true);
+			return lbl;
 		}
-		 return c;
+		else return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
 	}
 }

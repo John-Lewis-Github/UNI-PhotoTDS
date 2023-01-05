@@ -319,7 +319,7 @@ public class VentanaPublicarFoto {
 		compartir.setFocusPainted(false);
 		compartir.addActionListener(e -> {
 			//TODO Comprobar si la foto esta en un album, y si el album no esta creado, crearlo.
-			//Controlador.INSTANCE.publicarImagen(texto.getText(), path);
+			Controlador.INSTANCE.publicarImagen(texto.getText(), path);
 			fotoPublicada = true;
 			frame.dispose();
 		});

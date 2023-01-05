@@ -49,7 +49,7 @@ public class VentanaVerFoto {
 			public void run() {
 				try {
 					Foto prueba = new Foto("prueba", "esto es una prueba", "resources/default_user_pic.png");
-					VentanaVerFoto v = new VentanaVerFoto(prueba, "Parajes franceses");
+					VentanaVerFoto v = new VentanaVerFoto(prueba.getImagen(), "Parajes franceses");
 					v.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -66,21 +66,21 @@ public class VentanaVerFoto {
 		frame.setVisible(b);
 	}
 	
-	public VentanaVerFoto(Foto foto) {
+	public VentanaVerFoto(Image imagen) {
 		initialize();
 		
-		panelFoto = crearPanelFotoSeleccionada(foto);
+		panelFoto = crearPanelFotoSeleccionada(imagen);
 		panelTexto = crearPanelComentario();
 		
 		contenedor.add(panelFoto, BorderLayout.WEST);
 		contenedor.add(panelTexto, BorderLayout.CENTER);
 	}
 	
-	public VentanaVerFoto(Foto foto, String nombreAlbum) {
+	public VentanaVerFoto(Image imagen, String nombreAlbum) {
 		initialize();
 		
 		JPanel panelCabeceraAlbum = crearCabeceraAlbum(nombreAlbum);
-		panelFoto = crearPanelFotoSeleccionada(foto);
+		panelFoto = crearPanelFotoSeleccionada(imagen);
 		panelTexto = crearPanelComentario();
 		
 		frame.getContentPane().add(panelCabeceraAlbum, BorderLayout.NORTH);
@@ -106,13 +106,13 @@ public class VentanaVerFoto {
 	}
 	
 	
-	private JPanel crearPanelFotoSeleccionada(Foto foto) {
+	private JPanel crearPanelFotoSeleccionada(Image imagen) {
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.white);
 		panel.setSize(new Dimension(ANCHURA,ALTURA));
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		JLabel labelFoto = new JLabel();
-		insertarImagen(labelFoto, foto.getImagen());
+		insertarImagen(labelFoto, imagen);
 		panel.add(labelFoto);
 		return panel;
 	}

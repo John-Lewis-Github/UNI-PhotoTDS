@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -82,12 +83,6 @@ public enum Controlador implements FotosListener{
 	}
 	
 	/**
-	 * 
-	 * @param usuario el usuario a registrar
-	 * @return true si se ha podido registrar al usuario, false si no
-	 */
-	
-	/**
 	 * Registra un usuario en la aplicacion
 	 *
 	 * @param nombreCompleto el nombre completo
@@ -103,7 +98,12 @@ public enum Controlador implements FotosListener{
 	public boolean registrarUsuario(String nombreCompleto, String nombreUsuario, Date fecha, String email, String password,
 			String fotoPerfilPath, String presentacion) {
 		Usuario usuario = new Usuario(nombreCompleto, nombreUsuario, fecha, email, password);
-		usuario.setPath(fotoPerfilPath);
+		
+		if ((fotoPerfilPath == null) || fotoPerfilPath.equals(""))
+			usuario.setPath(RUTA_DEFAULT_PROF_PIC);
+		else
+			usuario.setPath(fotoPerfilPath);
+
 		usuario.setPresentacion(presentacion);
 		
 		if (usRepo.addUsuario(usuario)) {
@@ -152,7 +152,7 @@ public enum Controlador implements FotosListener{
 		return usuario.getPublicacionesRelevantes().stream()
 				.sorted((p1, p2) -> p1.getFecha().compareTo(p2.getFecha()))
 				.limit(MAX_PUBLICACIONES_USUARIO)
-				.toList();
+				.collect(Collectors.toList());
 	}
 	
 	/**
@@ -265,10 +265,10 @@ public enum Controlador implements FotosListener{
 			
 			// Se incluyen los hashtags
 			List<Hashtag> hashtags = f.getHashTags().stream()
-					.map(h -> h.getHashTag().get(0))
+					.flatMap(h -> h.getHashTag().stream())
 					.filter(s -> Hashtag.verificaHashtag(s))
 					.map(s -> hashRepo.getHashtag(s))
-					.toList();
+					.collect(Collectors.toList());
 			foto.addHashtags(hashtags);
 			
 			// Se crea y registra la foto
@@ -286,6 +286,13 @@ public enum Controlador implements FotosListener{
 	 */
 	public void darMeGusta(Publicacion publicacion) {
 		publicacion.darMeGusta();
+	}
+
+	public List<Image> getListaImagenesUsuario(Usuario usuario) {
+		return usuario.getFotos()
+				.stream()
+				.map(f -> f.getImagen())
+				.collect(Collectors.toList());
 	}
 	
 }

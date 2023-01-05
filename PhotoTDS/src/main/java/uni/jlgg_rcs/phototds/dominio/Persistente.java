@@ -3,6 +3,7 @@ package uni.jlgg_rcs.phototds.dominio;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface Persistente {
 	
@@ -50,6 +51,6 @@ public interface Persistente {
 		
 		return Arrays.asList(s.split(" ")).stream()
 				.map(e -> Integer.parseInt(e))
-				.toList();
+				.collect(Collectors.toList());
 	}
 }

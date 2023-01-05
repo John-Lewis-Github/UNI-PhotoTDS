@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -45,9 +46,11 @@ public class VentanaPrincipal {
 	private JPanel menuPrincipal;
 	private JPanel panelPublicaciones;
 	private JPanel panelPerfilUsuario;
-	private JList<Foto> listaFotos;
-	private DefaultListModel<Foto> fotosListModel;
-	private Usuario usuario;
+	private JList<Image> listaFotos;
+	private DefaultListModel<Image> fotosListModel;
+	private Usuario usuarioLogeado;
+	private Usuario usuarioSeleccionado;
+	
 	private boolean vistaPerfil;
 	
 	public static void main(String[] args) {
@@ -55,7 +58,7 @@ public class VentanaPrincipal {
 			public void run() {
 				try {
 					VentanaPrincipal v = new VentanaPrincipal();
-					v.frame.setVisible(true);
+					v.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -69,11 +72,14 @@ public class VentanaPrincipal {
 		contenedor.add(menuPrincipal,  BorderLayout.NORTH);
 		panelPublicaciones = crearPanelPublicaciones();
 		contenedor.add(panelPublicaciones,  BorderLayout.CENTER);
-		
+	}
+	
+	public void setVisible(boolean b) {
+		this.frame.setVisible(b);
 	}
 
 	private void initialize() {
-		usuario = Controlador.INSTANCE.getUsuario();
+		usuarioLogeado = Controlador.INSTANCE.getUsuario();
 		//inicializamos el frame
 		frame = new JFrame();
 		frame.setSize(ANCHURA, ALTURA);
@@ -380,14 +386,16 @@ public class VentanaPrincipal {
 		/*Ponemos la matriz de fotos */
 		
 		JScrollPane scrollFotos = new JScrollPane();
-		scrollFotos.setBackground(Color.WHITE);
+		scrollFotos.setBackground(Color.green);
+		// scrollFotos.setBackground(Color.WHITE);
 		panelMatrizFotos.add(scrollFotos);
-		listaFotos = new JList<Foto>();
-		//TODO funcion que te devuelva la lista de imagenes que ha publicado un usuario
-		listaFotos = Controlador.INSTANCE.getListaImagenesUsuario();
-		fotosListModel = new DefaultListModel<Foto>();
+		listaFotos = new JList<Image>();
+		// TODO funcion que te devuelva la lista de imagenes que ha publicado un usuario
+		// listaFotos = Controlador.INSTANCE.getListaImagenesUsuario();
+		List<Image> listaImagenes = Controlador.INSTANCE.getListaImagenesUsuario(usuarioLogeado);
+		fotosListModel = new DefaultListModel<Image>();
+		fotosListModel.addAll(listaImagenes);
 		listaFotos.setModel(fotosListModel);
-		usuario.getFotos().forEach(f -> fotosListModel.addElement(f));
 		listaFotos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listaFotos.setVisibleRowCount(-1);
 		listaFotos.ensureIndexIsVisible(panelMatrizFotos.getHeight());
@@ -460,8 +468,9 @@ public class VentanaPrincipal {
 		panelBotonesFotosAlbumes.add(Box.createHorizontalStrut(20));
 		panelBotonesFotosAlbumes.add(botonAlbumes);
 		
+		panelMatrizFotos.add(scrollFotos);
 		
-		
+
 		return panel;
 	}
 	

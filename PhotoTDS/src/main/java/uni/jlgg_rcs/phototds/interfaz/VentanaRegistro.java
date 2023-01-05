@@ -57,6 +57,7 @@ public class VentanaRegistro extends JFrame {
 	private String fotoPerfilPath;
 	private JDateChooser dateChooser;
 	private String presentacion = "";
+	private DialogoPresentacion dialogo;
 
 	/**
 	 * Launch the application.
@@ -235,7 +236,7 @@ public class VentanaRegistro extends JFrame {
 		
 		JButton botonPresentacion = new JButton("...");
 		botonPresentacion.addActionListener(e -> {
-			DialogoPresentacion dialogo = new DialogoPresentacion();
+			dialogo = new DialogoPresentacion();
 			dialogo.setLocationRelativeTo(botonPresentacion);
 			dialogo.setVisible(true);
 		});
@@ -266,6 +267,8 @@ public class VentanaRegistro extends JFrame {
 			String password = this.pwdPassword.getText();
 			
 			Date fecha = dateChooser.getDate();
+			
+			String presentacion = dialogo.getPresentacion();
 			
 			boolean registrado = Controlador.INSTANCE.registrarUsuario(nombreCompleto, nombreUsuario, fecha, email, password, fotoPerfilPath, presentacion);
 

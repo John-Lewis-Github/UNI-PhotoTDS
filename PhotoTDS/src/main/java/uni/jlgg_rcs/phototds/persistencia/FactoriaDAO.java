@@ -9,7 +9,7 @@ import uni.jlgg_rcs.phototds.dominio.Foto;
 
 public abstract class FactoriaDAO {
 	
-	public static final String DAO_MYSQL = "uni.JLGG_RCS.PhotoTDS.Persistencia.MySQLFactoriaDAO";
+	public static final String DAO_MYSQL = "uni.jlgg_rcs.phototds.persistencia.H2FactoriaDAO";
 
 	private static FactoriaDAO unicaInstancia = null;
 	

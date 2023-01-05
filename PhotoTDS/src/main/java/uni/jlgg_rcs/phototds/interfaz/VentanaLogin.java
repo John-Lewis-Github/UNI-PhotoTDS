@@ -15,6 +15,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+
+import uni.jlgg_rcs.phototds.controlador.Controlador;
+
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
@@ -36,6 +39,8 @@ public class VentanaLogin {
 	private static final int ANCHOPANELPRINCIPAL = 350;
 	private static final int ALTOPANELPRINCIPAL = 250;
 	private static final int ALTOPANELCREARCUENTA = 120;
+	private static final int MARGEN_VERTICAL = 10;
+	private static final int TAMANO_CUERPO = 15;
 	private JFrame frame;
 	private JPanel contenedor;
 	private JPanel panelPrincipal;
@@ -144,15 +149,42 @@ public class VentanaLogin {
 		passwordField.setColumns(30);
 		panelTexto.add(passwordField);
 		panel.add(panelTexto);
+		
+		panel.add(Box.createVerticalStrut(MARGEN_VERTICAL));
 				
-		JButton btnNewButton = new JButton("Iniciar Sesión");
-		btnNewButton.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
-		btnNewButton.setMinimumSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
-		btnNewButton.setMaximumSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
-		btnNewButton.setBackground(new Color(30, 144, 255));
-		btnNewButton.setForeground(Color.WHITE);
-		btnNewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		panel.add(btnNewButton);		
+		JButton botonIniciarSesion = new JButton("Iniciar Sesión");
+		botonIniciarSesion.setPreferredSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
+		botonIniciarSesion.setMinimumSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
+		botonIniciarSesion.setMaximumSize(new Dimension(ANCHOPANELPRINCIPAL, 75));
+		botonIniciarSesion.setBackground(new Color(30, 144, 255));
+		botonIniciarSesion.setForeground(Color.WHITE);
+		botonIniciarSesion.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(botonIniciarSesion);
+		
+		JLabel error = new JLabel("Usuario o password incorrecctos");
+		error.setFont(new Font("Dialog", Font.PLAIN, TAMANO_CUERPO));
+		error.setForeground(Color.RED);
+		error.setAlignmentX(Component.CENTER_ALIGNMENT);
+		error.setVisible(false);
+		panel.add(error);
+
+		
+		botonIniciarSesion.addActionListener(e -> {
+			String nombreUsuario = textField.getText();
+			String password = passwordField.getText();
+			
+			boolean logeado = Controlador.INSTANCE.recuperarUsuario(nombreUsuario, password);
+			
+			if (logeado) {
+				VentanaPrincipal ventana = new VentanaPrincipal();
+				ventana.setVisible(true);
+				frame.dispose();
+			} else {
+				error.setVisible(true);
+			}
+			
+		});
+		panel.add(botonIniciarSesion);		
 		
 		return panel;
 	}
