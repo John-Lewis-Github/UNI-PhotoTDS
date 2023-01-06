@@ -54,7 +54,7 @@ public class VentanaRegistro extends JFrame {
 	private JTextField txtNombreDeUsuario;
 	private JPasswordField pwdPassword;
 	
-	private String fotoPerfilPath;
+	private String fotoPerfilPath = "";
 	private JDateChooser dateChooser;
 	private String presentacion = "";
 	private DialogoPresentacion dialogo;

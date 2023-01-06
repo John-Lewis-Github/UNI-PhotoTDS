@@ -8,10 +8,12 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
@@ -26,9 +28,9 @@ public class VentanaPrincipal {
 	private static final int ALTURA = 700;
 	private static final int ANCHURA_TITULO = 600;
 	private static final int ALTURA_MENU = 70;
-	private static final int ALTURA_PANEL_PUBLICACIONES = ALTURA - ALTURA_MENU - 45;
+	private static final int ALTURA_PANEL_PUBLICACIONES = ALTURA - ALTURA_MENU - 40;
 	private static final int ANCHURA_ENTRADA = ANCHURA;
-	private static final int ALTURA_ENTRADA = ALTURA/10;
+	private static final int ALTURA_ENTRADA = ALTURA/7;
 	private static final int ANCHURA_PANEL_PERFIL_USUARIO = ANCHURA;
 	private static final int ALTURA_PANEL_PERFIL_USUARIO = ALTURA_PANEL_PUBLICACIONES;
 	private static final int ALTURA_PANEL_INFO_USUARIO = ALTURA_PANEL_PERFIL_USUARIO/3;
@@ -39,7 +41,7 @@ public class VentanaPrincipal {
 	private static final int ANCHURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO = ANCHURA;
 	private static final int ALTURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO = ALTURA_PANEL_FOTOS_Y_ALBUMES_USUARIO/12;
 	private static final int ANCHURA_MATRIZ_FOTOS = ANCHURA;
-	private static final int ALTURA_MATRIZ_FOTOS = ALTURA_PANEL_FOTOS_Y_ALBUMES_USUARIO - ALTURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO;
+	private static final int ALTURA_MATRIZ_FOTOS = ALTURA_PANEL_FOTOS_Y_ALBUMES_USUARIO - ALTURA_PANEL_BOTONES_FOTOS_ALBUMES_USUARIO - 110;
 	private static final int ANCHURA_ICONO = 70;
 	private static final int ALTURA_ICONO = 70;
 	
@@ -112,7 +114,7 @@ public class VentanaPrincipal {
 		JList<EntradaPublicacion> lista=new JList<EntradaPublicacion>();
 		DefaultListModel<EntradaPublicacion> model= new DefaultListModel<>();
 		listaPublicaciones.stream()
-			.map(p -> new EntradaPublicacion(ANCHURA_ENTRADA, ALTURA_ENTRADA, p))
+			.map(p -> new EntradaPublicacion((int)(ANCHURA_ENTRADA*0.97), ALTURA_ENTRADA, p))
 			.forEach(e -> model.addElement(e));
 		
 		lista.setModel(model);
@@ -162,6 +164,21 @@ public class VentanaPrincipal {
 		botonInsertarFoto.addActionListener(e -> {
 			VentanaPublicarFoto publicar = new VentanaPublicarFoto();
 			publicar.setVisible(true);
+			JPanel refrescarPanel;
+			if(vistaPerfil) {
+				 refrescarPanel = crearPanelUsuario();
+				 panelPerfilUsuario.setVisible(false);
+				 contenedor.add(refrescarPanel, BorderLayout.CENTER);
+				 panelPerfilUsuario = refrescarPanel;
+			}else {
+				refrescarPanel = crearPanelPublicaciones();
+				panelPublicaciones.setVisible(false);
+				contenedor.add(refrescarPanel, BorderLayout.CENTER);
+				panelPublicaciones = refrescarPanel;
+			}
+			contenedor.revalidate();
+			contenedor.repaint();
+			frame.validate();
 		});
 		
 		/** Insertamos un botón para subir albumes **/
@@ -194,17 +211,19 @@ public class VentanaPrincipal {
 		 * del usuario inscrita en un círculo.
 		 * */
 		JButton botonFotoUsuario = new JButton();
-		Image iconoUsuario = Controlador.INSTANCE.getImagenUsuario(usuarioLogeado).getScaledInstance(ANCHURA_ICONO, ALTURA_ICONO, 0);
-		botonFotoUsuario.setIcon(new ImageIcon(iconoUsuario));
+		Image imagenUsuario = Controlador.INSTANCE.getImagenUsuario(usuarioLogeado).getScaledInstance(ANCHURA_ICONO, ALTURA_ICONO, 0);
+		ImageIcon iconoUsuario = new ImageIcon(imagenUsuario);
+		botonFotoUsuario.setIcon(iconoUsuario);
 		botonFotoUsuario.setFocusPainted(false);
 		botonFotoUsuario.setBackground(Color.WHITE);
 		botonFotoUsuario.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
 		
-		JLabel lblFotoUsuario = new JLabel("foto");
-		lblFotoUsuario.setBackground(Color.red);
-		lblFotoUsuario.setHorizontalTextPosition(SwingConstants.CENTER);
-		lblFotoUsuario.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFotoUsuario.setFont(new Font("Arial", Font.PLAIN, 20));
+		JLabel lblFotoUsuario = new JLabel();
+		lblFotoUsuario.setIcon(iconoUsuario);
+		//lblFotoUsuario.setBackground(Color.red);
+		//lblFotoUsuario.setHorizontalTextPosition(SwingConstants.CENTER);
+		//lblFotoUsuario.setHorizontalAlignment(SwingConstants.CENTER);
+		//lblFotoUsuario.setFont(new Font("Arial", Font.PLAIN, 20));
 		lblFotoUsuario.setVisible(false);
 		
 		/** Finalmente, insertamos el boton para las opciones Premium **/
@@ -299,7 +318,10 @@ public class VentanaPrincipal {
 		fixSize(panelInfoYFoto, ANCHURA_PANEL_PERFIL_USUARIO, ALTURA_PANEL_INFO_USUARIO);
 		
 		//Insertamos la foto de perfil en grande
-		JLabel lblFotoPerfil = new JLabel("Foto");
+		JLabel lblFotoPerfil = new JLabel();
+		Image imagenUsuario = Controlador.INSTANCE.getImagenUsuario(usuarioLogeado).getScaledInstance(ANCHURA_FOTO_PERFIL_GRANDE, ALTURA_PANEL_INFO_USUARIO, 0);
+		ImageIcon iconoUsuario = new ImageIcon(imagenUsuario);
+		lblFotoPerfil.setIcon(iconoUsuario);
 		fixSize(lblFotoPerfil, ANCHURA_FOTO_PERFIL_GRANDE, ALTURA_PANEL_INFO_USUARIO);
 		
 		//Insertamos un nuevo panel, con un BoxLayout orientado en el eje Y
@@ -394,16 +416,19 @@ public class VentanaPrincipal {
 		
 		JScrollPane scrollFotos = new JScrollPane();
 		scrollFotos.setBackground(Color.WHITE);
-		panelMatrizFotos.add(scrollFotos);
 		List<Image> listaImagenes = Controlador.INSTANCE.getListaImagenesUsuario(usuarioLogeado);
+		/* listaImagenes = listaImagenes
+			.stream()
+			.map(i -> i.getScaledInstance(ANCHURA_MATRIZ_FOTOS/3, ALTURA_MATRIZ_FOTOS/3, 0))
+			.collect(Collectors.toList());;*/
 		fotosListModel = new DefaultListModel<Image>();
 		fotosListModel.addAll(listaImagenes);
 		listaFotos = new JList<Image>();
 		listaFotos.setModel(fotosListModel);
 		listaFotos.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		listaFotos.setVisibleRowCount(-1);
-		listaFotos.ensureIndexIsVisible(panelMatrizFotos.getHeight());
-		listaFotos.setCellRenderer(new FotoListRenderer());
+		listaFotos.ensureIndexIsVisible(ALTURA_MATRIZ_FOTOS);
+		listaFotos.setCellRenderer(new FotoListRenderer((int)(ANCHURA_MATRIZ_FOTOS*0.32), ALTURA_MATRIZ_FOTOS/3));
 		
 		fixSize(scrollFotos, ANCHURA_MATRIZ_FOTOS, ALTURA_MATRIZ_FOTOS);
 		scrollFotos.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -475,7 +500,6 @@ public class VentanaPrincipal {
 		panelBotonesFotosAlbumes.add(botonAlbumes);
 		
 		panelMatrizFotos.add(scrollFotos);
-		
 
 		return panel;
 	}

@@ -34,7 +34,7 @@ public enum Controlador implements FotosListener{
 	INSTANCE;
 	
 	private static final int MAX_PUBLICACIONES_USUARIO = 20;
-	 private static final String RUTA_DEFAULT_PROF_PIC = "/resources/default_user_pic.png";
+	 private static final String RUTA_DEFAULT_PROF_PIC = "resources/default_user_pic.png";
 
 	
 	private FactoriaDAO fact;

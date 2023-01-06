@@ -86,7 +86,7 @@ public class EntradaPublicacion extends JPanel {
 		
 		//ponemos un panel con un FlowLayout para los botones y el contador de me gusta
 		JPanel panelBotonesyMeGusta = new JPanel();
-		panelBotonesyMeGusta.setLayout(new FlowLayout());
+		panelBotonesyMeGusta.setLayout(new FlowLayout(FlowLayout.LEFT));
 		fixSize(panelBotonesyMeGusta, 2*ancho/3, alto/2);
 		
 		//metemos el contador de me gusta
@@ -95,6 +95,7 @@ public class EntradaPublicacion extends JPanel {
 		
 		//metemos el boton de me gusta
 		JButton botonMeGusta = new JButton("❤️");
+		botonMeGusta.setFont(new Font("Dialog", Font.BOLD, 15));
 		botonMeGusta.setForeground(Color.white);
 		
 		// Al dar "meGusta" se repintara la etiqueta de "meGusta"
@@ -106,20 +107,21 @@ public class EntradaPublicacion extends JPanel {
 		
 		//metemos el boton de comentar 💬
 		JButton botonComentar = new JButton("🗨︎");
+		botonComentar.setFont(new Font("Dialog", Font.BOLD, 15));
 		botonComentar.setForeground(Color.white);
 		
 		//ponemos un panel con un FlowLayout para poner la imagen del usuario
 		//que ha subido la publicacion, y su nombre
 		JPanel panelUsuario = new JPanel();
-		panelUsuario.setLayout(new FlowLayout());
+		panelUsuario.setLayout(new FlowLayout(FlowLayout.LEFT));
 		fixSize(panelUsuario, 2*ancho/3, alto/2);
 		
 		//metemos la foto del usuario que ha subido la publicacion
 		JLabel lblFotoUsuario = new JLabel();
 		Image imagenUsuario = Controlador.INSTANCE.getImagenUsuario(publicacion);
-		ImageIcon iconoImagenUsuario = new ImageIcon(imagenUsuario.getScaledInstance(ancho/6, alto, 0));
+		ImageIcon iconoImagenUsuario = new ImageIcon(imagenUsuario.getScaledInstance(ancho/7, alto/2, 0));
 		lblFotoUsuario.setIcon(iconoImagenUsuario);
-		fixSize(lblFotoUsuario,ancho/6,alto);
+		fixSize(lblFotoUsuario,ancho/7,alto/2);
 		
 		//metemos el nombre del usuario
 		String nombreUsuario = publicacion.getUsuario().getNombreUsuario();
